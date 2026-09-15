@@ -196,8 +196,8 @@ textarea {
     #poolScrollTop:hover { transform: translateY(-3px); filter: brightness(1.1); }
   
 /* === BİRLEŞİK UYGULAMA: 1. VERİ PANELİ SABİT === */
-#masterInputPanel{position:sticky;top:10px;z-index:80;box-shadow:0 18px 38px rgba(0,0,0,.60),0 0 0 1px rgba(78,169,255,.06);backdrop-filter:blur(14px) saturate(135%);}
-@media(max-width:1020px){#masterInputPanel{position:sticky;top:6px;}}
+#masterInputPanel{position:relative;z-index:80;box-shadow:0 18px 38px rgba(0,0,0,.60),0 0 0 1px rgba(78,169,255,.06);backdrop-filter:blur(14px) saturate(135%);}
+@media(max-width:1020px){#masterInputPanel{position:relative;}}
 #globalScrollTop{display:none;position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:50%;border:1px solid #3b82f6;background:#0b1220;color:#60a5fa;font-size:20px;font-weight:900;cursor:pointer;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.45);align-items:center;justify-content:center;}
 #globalScrollTop:hover{transform:translateY(-2px);filter:brightness(1.15);}
 
@@ -1037,7 +1037,7 @@ function regenerate(){
 
   const btnKapak = document.querySelector('a[href*="Kapak Prompt Aracı"]');
   if (btnKapak) {
-      btnKapak.href = `Video-Kapak-Prompt-Araci.html?s=${encodeURIComponent(ownerInput)}&e=${encodeURIComponent(workInput)}`;
+      btnKapak.href = `Video Kapak Prompt Aracı.html?s=${encodeURIComponent(ownerInput)}&e=${encodeURIComponent(workInput)}`;
   }
 
   if(shortsMode){
@@ -1698,7 +1698,7 @@ function requestUnifiedModule(name){
       return;
     }
   }catch(e){}
-  const target=name==='assistant'?'Dijital-Icerik-Asistani.html':'Video-Kapak-Prompt-Araci.html';
+  const target=name==='assistant'?'Dijital İçerik Asistanı.html':'Video Kapak Prompt Aracı.html';
   window.location.href=target;
 }
 </script>
