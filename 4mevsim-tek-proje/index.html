@@ -84,6 +84,5 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>open
 ['assistant','prompt'].forEach(n=>document.getElementById('frame-'+n).addEventListener('load',()=>{
   sendTo(n);
 }));
-document.getElementById('frame-main').addEventListener('load',()=>{ sendChildren(); });
 </script>
 </body></html>

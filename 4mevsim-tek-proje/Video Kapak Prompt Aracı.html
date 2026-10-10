@@ -355,6 +355,15 @@ input[type=range]::-moz-range-thumb {
                 <button class="chip" onclick="selectIcon('a glowing cinematic neon border frame', this)">🔲 Neon Işıklı Çerçeve</button>
                 <button class="chip" onclick="selectIcon('a bold glowing YouTube play button or massive 3D arrow', this)">▶️ 3D Ok & Play Butonu</button>
                 <button class="chip" onclick="selectIcon('a majestic 3D musical staff starting with a treble clef, spiraling inward into a deep perspective tunnel, notes vanishing into the distance with a glowing motion blur', this)">🎼 Nota Tüneli (3D)</button>
+                <!-- Ferman ZIP'inden esinlenen yeni metinsel simgeler: görseller dosya olarak eklenmez. -->
+                <button class="chip" onclick="selectIcon('a faded antique archival parchment sheet with rough visible paper fibers subtle folds irregular beige discoloration and aged water stains', this)">📄 Solgun Arşiv Parşömeni</button>
+                <button class="chip" onclick="selectIcon('a heavily weathered medieval parchment with torn ragged edges frayed paper fibers deep creases cracked patina and dark sepia stains', this)">📜 Yırtık Kenarlı Pürüzlü Ferman</button>
+                <button class="chip" onclick="selectIcon('a wrinkled old decree page surrounded by a dark distressed wooden border with rusty iron corner pins rough cracked grain and deep fold lines', this)">🧷 Çivili Ahşap Kenarlı Ferman</button>
+                <button class="chip" onclick="selectIcon('a two-tone antique paper surface with a dark mottled rough upper area fading into dusty pale parchment below with granular stains and coarse fibrous texture', this)">🟤 Mottolu Pürüzlü Kâğıt</button>
+                <button class="chip" onclick="selectIcon('an antique parchment panel with an ornate baroque engraved border tarnished gold leaf rubbed gilding uneven patina and weathered sepia paper', this)">🏛️ Barok Altın Varaklı Parşömen</button>
+                <button class="chip" onclick="selectIcon('a rough medieval parchment scroll with curled rolled ends uneven torn sides darkened edges cracked patina and visible aged paper fibers', this)">🪶 Kıvrık Uçlu Eskitilmiş Ferman</button>
+                <button class="chip" onclick="selectIcon('a dark embossed antique scroll with deep crimson rolled ends rough black ornamental texture worn metal details and dramatic aged shadows', this)">⚫ Koyu Kabartmalı Kırmızı Rulo Ferman</button>
+                <button class="chip" onclick="selectIcon('a regal antique gold panel with embossed ornamental top and bottom decorations tarnished gold leaf amber-stained parchment center and weathered vintage edges', this)">👑 Eskitilmiş Saray Altın Paneli</button>
             </div>
         </div>
 
@@ -1052,6 +1061,23 @@ let brushPrompt = "";
         textPower = "Typography: Elegant 3D letters. Ensure clear hierarchy.";
     }
     
+    // Ferman/parşömen simgeleri seçildiyse yüzey dokusunu bulanıklaştırmadan koru.
+    // Bu koşul sadece bu yeni eskitilmiş doku tanımları kullanıldığında devreye girer.
+    const agedTextureTerms = [
+        "antique archival parchment sheet",
+        "weathered medieval parchment",
+        "old decree page surrounded by a dark distressed wooden border",
+        "two-tone antique paper surface",
+        "antique parchment panel with an ornate baroque engraved border",
+        "rough medieval parchment scroll with curled rolled ends",
+        "dark embossed antique scroll with deep crimson rolled ends",
+        "regal antique gold panel with embossed ornamental top and bottom decorations"
+    ];
+    const useAgedTextureTreatment = agedTextureTerms.some(term => userIcon.includes(term));
+    if (useAgedTextureTreatment) {
+        iconModifier = "AGED PAPER / FERMAN TEXTURE: Render [ICON] as a clearly visible and sharply detailed paper surface or decorative outer frame, not as a distant blurry symbol. Preserve rough paper fibers, ragged edges, deep creases, cracks, stains, mottled patina, tarnished gilding and worn corners wherever described. Keep the central subject and main typography readable; do not smooth away the aged and coarse texture.";
+    }
+
     let branding = "";
     if (channel) {
         if (watermarkStyle === "subtle") {
@@ -1479,6 +1505,28 @@ inputEvents.forEach(id => {
 
 updatePrompts();
 
+
+// === ANA PROGRAMDAN TEK YÖNLÜ VERİ ALMA (BİRLEŞİK PROJE) ===
+// Ana programdaki sanatçı ve eser alanları buraya aktarılır; bu modül ana programa veri geri göndermez.
+function applyMainProject(data) {
+    if (!data) return;
+    const artistField = document.getElementById('artist');
+    const songField = document.getElementById('song');
+    if (artistField && data.artist !== undefined) artistField.value = data.artist || '';
+    if (songField && data.song !== undefined) songField.value = data.song || '';
+    updatePrompts();
+}
+window.addEventListener('message', function (event) {
+    const message = event.data || {};
+    if (message.target === '4mevsim-prompt' && message.type === 'PROJECT_STATE') {
+        applyMainProject(message.data);
+    }
+});
+// Sayfa açıldığında o anda ana programda bulunan değerleri iste.
+if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ source: '4mevsim-prompt', type: 'REQUEST_MAIN_STATE', module: 'prompt' }, '*');
+}
+
 // --- SCROLL TO TOP FONKSİYONU ---
 const scrollTopBtn = document.createElement("button");
 scrollTopBtn.id = "scrollTopBtn";
@@ -1497,21 +1545,6 @@ window.onscroll = function() {
 scrollTopBtn.onclick = function() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
-
-// === ANA PROGRAMDAN TEK YÖNLÜ PROJE VERİSİ ===
-function applyMainProject(data){
-  if(!data) return;
-  if(data.artist !== undefined) document.getElementById("artist").value = data.artist || "";
-  if(data.song !== undefined) document.getElementById("song").value = data.song || "";
-  updatePrompts();
-}
-window.addEventListener("message", function(e){
-  const d = e.data || {};
-  if(d.target === "4mevsim-prompt" && d.type === "PROJECT_STATE") applyMainProject(d.data);
-});
-if(window.parent && window.parent !== window){
-  window.parent.postMessage({source:"4mevsim-prompt", type:"REQUEST_MAIN_STATE", module:"prompt"}, "*");
-}
 </script>
 </body>
 </html>
