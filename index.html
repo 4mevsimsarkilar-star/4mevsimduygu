@@ -1,88 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>4mevsimŞabloncu • NRA • His Evreni — Tek Proje</title>
-<style>
-:root{--bg:#070a0f;--card:#111722;--line:#263044;--text:#e9ecf1;--muted:#9aa3b2;--teal:#14b8a6;--gold:#f0c94b;--blue:#4ea9ff;}
-*{box-sizing:border-box}html,body{margin:0;height:100%;background:radial-gradient(circle at top,#111827 0,#020308 55%,#000 100%);color:var(--text);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;overflow:hidden}
-.shell{height:100vh;display:flex;flex-direction:column}.top{padding:10px 14px;border-bottom:1px solid var(--line);background:rgba(7,10,15,.88);backdrop-filter:blur(18px);display:flex;align-items:center;gap:12px;flex-wrap:wrap;z-index:20}.brand{display:flex;align-items:center;gap:10px;min-width:280px}.brand img{width:42px;height:42px;border-radius:50%;object-fit:cover}.brand b{font-size:18px;color:var(--teal)}.brand span{display:block;font-size:11px;color:var(--muted)}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-left:auto}.tab{border:1px solid var(--line);background:#111722;color:var(--muted);padding:9px 13px;border-radius:10px;cursor:pointer;font-weight:700}.tab:hover{filter:brightness(1.15)}.tab.active{border-color:var(--teal);color:var(--teal);background:rgba(20,184,166,.12)}
-.project{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:11px;color:var(--muted)}.status{padding:5px 8px;border:1px solid var(--line);border-radius:99px}.status.live{color:#5eead4;border-color:#0f766e}
-.workspace{position:relative;flex:1;min-height:0}.frame{position:absolute;inset:0;border:0;width:100%;height:100%;background:#05070b;display:none}.frame.active{display:block}.notice{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:5;display:none;padding:7px 12px;border-radius:999px;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.4);color:#99f6e4;font-size:11px;pointer-events:none}.notice.show{display:block}
-@media(max-width:950px){.brand{min-width:0}.tabs{margin-left:0}.project{display:none}}
-</style>
-</head><body>
-<div class="shell">
-  <div class="top">
-    <div class="brand"><img src="4mş-logo.png"><div><b>4mevsimŞabloncu • NRA • His Evreni</b><span>Tek proje • ortak veri havuzu • modüller arası canlı senkronizasyon</span></div></div>
-    <div class="tabs">
-      <button class="tab active" data-module="main">🏠 Ana Program</button>
-      <button class="tab" data-module="prompt">💽 Video Kapak Prompt Aracı</button>
-      <button class="tab" data-module="assistant">🧑‍💻 Dijital İçerik Asistanı</button>
-    </div>
-    <div class="project"><span>Proje</span><span id="projectStatus" class="status live">CANLI</span></div>
-  </div>
-  <div class="workspace">
-    <iframe id="frame-main" class="frame active" title="Ana Program" src="4mevsimAna.html"></iframe>
-    <iframe id="frame-assistant" class="frame" title="Dijital İçerik Asistanı" src="Dijital İçerik Asistanı.html"></iframe>
-    <iframe id="frame-prompt" class="frame" title="Video Kapak Prompt Aracı" src="Video Kapak Prompt Aracı.html"></iframe>
-    <div id="notice" class="notice">Ortak proje güncellendi</div>
-  </div>
-</div>
-<script>
-// ============================================================
-// TEK YÖNLÜ ORTAK PROJE KÖPRÜSÜ
-// ANA PROGRAM = TEK VERİ KAYNAĞI
-// Alt modüller ana veriyi okuyabilir; ana programa veri yazamaz.
-// ============================================================
-const state = {type:'Şarkı Videoları', artist:'', song:'', feel:''};
-
-function toast(){
-  const n=document.getElementById('notice');
-  n.classList.add('show');
-  clearTimeout(window.__toast);
-  window.__toast=setTimeout(()=>n.classList.remove('show'),900);
-}
-function sendTo(name){
-  const f=document.getElementById('frame-'+name);
-  if(f && f.contentWindow){
-    f.contentWindow.postMessage({target:'4mevsim-'+name,type:'PROJECT_STATE',data:{...state}},'*');
-  }
-}
-function sendChildren(){ sendTo('assistant'); sendTo('prompt'); }
-function openUnifiedModule(name){
-  if(!['main','assistant','prompt'].includes(name)) return;
-  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.module===name));
-  document.querySelectorAll('.frame').forEach(f=>f.classList.toggle('active',f.id==='frame-'+name));
-  if(name!=='main') sendTo(name);
-}
-window.openUnifiedModule=openUnifiedModule;
-
-window.addEventListener('message',e=>{
-  const d=e.data||{};
-
-  // Alt modül açılırken güncel ana veriyi istemesi.
-  if(d.type==='REQUEST_MAIN_STATE'){
-    if(e.source && e.source.postMessage) e.source.postMessage({target:'4mevsim-'+(d.module||''),type:'PROJECT_STATE',data:{...state}},'*');
-    return;
-  }
-
-  // Navigasyon isteği yalnızca ana uygulama tarafından işlenir.
-  if(d.type==='NAVIGATE_MODULE' && d.module){ openUnifiedModule(d.module); return; }
-
-  // Yalnızca ANA PROGRAM veri yayınlayabilir.
-  if(d.type!=='PROJECT_UPDATE' || d.source!=='4mevsim-main' || !d.data) return;
-  state.type=d.data.type ?? state.type;
-  state.artist=d.data.artist ?? '';
-  state.song=d.data.song ?? '';
-  state.feel=d.data.feel ?? '';
-  sendChildren();
-  toast();
-});
-
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>openUnifiedModule(b.dataset.module)));
-['assistant','prompt'].forEach(n=>document.getElementById('frame-'+n).addEventListener('load',()=>{
-  sendTo(n);
-}));
-</script>
-</body></html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>4mevsimşarkılar - Duygu Kürasyonu Platformu</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="./assets/index-BBC6-w5Q.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CBN88L6o.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
