@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>4mevsimşabloncu • NRA His Evreni Entegre</title>
+  
+  <script src="NRA-veriler.js"></script>
+
+  <style>
+/* KONTROL PANELİ RENKLİ VE EŞİT BOYUTLU BUTONLAR */
+.action-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: stretch; }
+.btn-act {
+    padding: 0 16px; border-radius: 12px; font-weight: 600; font-size: 14px;
+    color: #fff; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+    text-decoration: none; display: flex; align-items: center; justify-content: center;
+    transition: 0.2s ease; font-family: inherit; white-space: nowrap; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    height: 44px;
+}
+.btn-act:hover { filter: brightness(1.2); box-shadow: 0 0 12px rgba(255,255,255,0.2); transform: translateY(-1px); }
+.act-1 { background: #135e59; color: #5eead4; border-color: #0d9488; } /* Şablon */
+.act-2 { background: #7c2d12; color: #fdba74; border-color: #ea580c; } /* Shorts */
+.act-3 { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; } /* Temizle */
+.act-4 { background: #713f12; color: #fde047; border-color: #eab308; } /* AI */
+.act-5 { background: #4c1d95; color: #c4b5fd; border-color: #8b5cf6; } /* Kapak */
+.act-6 { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; } /* Asistan */
+.act-7 { background: #831843; color: #f9a8d4; border-color: #ec4899; } /* His Evreni */
+
+/* TÜM KUTUCUKLARIN DÜZENİNİ SABİTLER */
+.input-kutucuk, input, select, textarea {
+    width: 100% !important; 
+    box-sizing: border-box !important;
+    background: #0f131a; 
+    color: #e9ecf1; 
+    border: 1px solid #222838; 
+    padding: 10px 12px; 
+    border-radius: 10px; 
+    outline: none;
+    font-size: 14px;
+    margin: 0;
+}
+/* Textarea için özel yükseklik */
+textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+.input-kutucuk:focus {
+    border-color: #4ea9ff;
+    box-shadow: 0 0 8px rgba(78,169,255,0.3);
+}
+
+/* TEMİZLEME BUTONU (X) İÇİN STİLLER */
+.input-wrap { position: relative; width: 100%; display: flex; align-items: center; }
+.input-wrap input { padding-right: 32px !important; }
+.input-clear {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; font-size: 11px; font-weight: 900;
+    cursor: pointer; display: none; padding: 4px 6px; border-radius: 6px; transition: 0.2s ease; z-index: 10;
+}
+.input-clear:hover { background: rgba(239, 68, 68, 0.3); color: #fff; border-color: #ef4444; }
+
+    /* ========== ORTAK VE 4MEVSİM CSS ========== */
+    :root{
+      --bg:#0f1115; --card:#151922; --muted:#9aa3b2; --text:#e9ecf1;
+      --accent:#66d9e8; --line:#222838; --btn:#1f2633; --btnh:#273042;
+      --ok:#3ad29f; --warn:#ffcc66; --err:#ff6b6b; --active:#f0c94b;
+      --teal:#15b8a6; --amber:#f0c94b; --orange:#ff9a3c;
+      /* NRA His Evreni Renkleri */
+      --chip:#18212c; --chip-hover:#1f2a39; --chip-active:#253448;
+      --copy:#22c55e; --match:#29405a; --fav:#f1c40f; --danger:#ef4444;
+      --accent-neo:#4ea9ff; --dark-modal: #0b0f13;
+    }
+    *{box-sizing:border-box; scroll-behavior: smooth;}
+    html,body{height:100%}
+    body{ margin:0; background:radial-gradient(circle at top,#111827 0,#020308 52%,#000 100%); color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Inter,Arial; }
+    .wrap{ max-width:1200px; margin:24px auto 32px; padding:0 14px; }
+
+    header{
+      position:relative; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:14px; padding:12px 16px; border-radius:18px; background:linear-gradient(135deg,rgba(15,23,42,0.88),rgba(15,23,42,0.65)); border:1px solid rgba(148,163,184,0.3); box-shadow: 0 18px 40px rgba(0,0,0,0.75), 0 0 0 1px rgba(15,23,42,0.8); backdrop-filter:blur(18px) saturate(150%); overflow:hidden;
+    }
+    header::before{ content:""; position:absolute; inset:-1px; border-radius:inherit; background:linear-gradient(120deg,rgba(56,189,248,0.28),transparent 28%,transparent 72%,rgba(250,204,21,0.22)); opacity:0.6; pointer-events:none; mix-blend-mode:soft-light; }
+    
+    .brand{ display:flex; align-items:center; gap:10px; position:relative; z-index:1; }
+    .logo-real { width: 48px; height: 48px; display:flex; align-items:center; justify-content:center; border-radius:50%; overflow:hidden; background: radial-gradient(circle at 30% 30%, #a5f3fc 0, #22c55e 40%, #0f172a 100%); box-shadow: 0 0 0 1px rgba(15,23,42,.9), 0 0 18px rgba(45,212,191,.7), 0 0 40px rgba(56,189,248,.55); }
+    .logo-real img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+
+    header h1 { font-size: 24px !important; line-height: 1.25 !important; letter-spacing: 0.015em; font-weight: 600; display:flex; flex-direction:column; margin:0;}
+    header h1 span:first-child { color: #14b8a6 !important; }
+    header h1 span:last-child { color: #e5e7eb !important; font-size: 14px !important; font-weight: 300; margin-top: 4px; }
+
+    .actions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; position:relative; z-index:1; }
+    .pill{ border:1px solid var(--line); border-radius:999px; padding:6px 10px; background:#020617; color:#cdd6e3; font-size:12px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:0.15s ease;}
+    .pill:hover{ background:#020817; border-color:rgba(148,163,184,.9); }
+    .btn{ background:var(--btn); border:1px solid var(--line); color:var(--text); padding:9px 11px; border-radius:10px; cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:6px; transition:0.15s ease; white-space:nowrap; }
+    .btn:hover{ background:var(--btnh); box-shadow:0 0 0 2px rgba(102,217,232,.08); border-color:#2a3344; }
+
+    .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; align-items:stretch;}
+    .grid3 > .card { display: flex; flex-direction: column; }
+    .grid3 > .card > textarea { flex: 1; }
+    @media(max-width:1020px){.grid3{grid-template-columns:1fr}}
+    
+    .card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; position:relative; }
+    label{ font-size:13px; color:var(--muted); display:block; margin-bottom:6px; }
+    input,select,textarea{ width:100%; background:#0f131a; border:1px solid var(--line); color:var(--text); border-radius:10px; padding:10px 12px; font-size:14px; outline:none; }
+    input:focus,select:focus,textarea:focus{ border-color:#22c55e; box-shadow:0 0 0 1px rgba(34,197,94,.55); }
+    textarea{ min-height:140px; resize:vertical; line-height:1.5; }
+    .row{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; }
+    @media(max-width:980px){.row{grid-template-columns:1fr 1fr}} @media(max-width:640px){.row{grid-template-columns:1fr}}
+
+    .counter{ font-size:12px; color:#a9b3c2; margin-left:6px; } .counter.ok{color:var(--ok)} .counter.warn{color:var(--warn)} .counter.err{color:var(--err)}
+    .drop{position:relative; width: 100%;}
+    .drop>.head{ display:flex; justify-content:space-between; align-items:center; border:1px solid var(--line); background:#0f131a; border-radius:10px; padding:10px 12px; cursor:pointer; font-size:13px; color:#e5e7eb; }
+    .drop .menu{ position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:40; display:none; background:#020617; border:1px solid var(--line); border-radius:12px; max-height:260px; overflow:auto; padding:4px 0; }
+    .drop.open .menu{ display:block; }
+    .opt{ padding:8px 10px; border-bottom:1px solid #111827; cursor:pointer; border-radius:8px; margin:2px 8px; font-size:13px; color:#e5e7eb; display:flex; justify-content:space-between; }
+    .opt:hover{ box-shadow:0 0 6px #f0c94b66; background:#020817; } 
+    .opt.active{ background:var(--active); color:#111; font-weight:700; }
+    .mono{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace}
+    .foot{ display:flex; gap:8px; justify-content:flex-end; margin-top:8px; align-items:center; flex-wrap:wrap; }
+    .muted{ color:var(--muted); font-size:12px; }
+
+    .preview3{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; } .pv-desc{ grid-row: span 3; }
+    @media(max-width:1020px){.preview3{grid-template-columns:1fr}}
+    .pvblk{ background:#020617; border:1px dashed #2b3242; border-radius:12px; padding:10px; min-height:90px; font-size:13px; }
+    .pvwrap{position:relative} 
+    .pvwrap .copy{ 
+        position:absolute; right:8px; top:-4px; font-size:11px; padding:6px 12px; 
+        background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #60a5fa; 
+        border-radius:6px; cursor:pointer; font-weight:bold; transition: 0.2s;
+    }
+    .pvwrap .copy:hover{ background: #3b82f6; color: #fff; box-shadow: 0 0 10px rgba(59, 130, 246, 0.6); }
+
+    .editbar{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; } .lock{ opacity:.9; }
+    .inlineSel{ display:inline-flex; gap:6px; align-items:center; float:right; } .inlineSel select{ width:auto; min-width:240px; }
+
+    .card > .row > div > label { display: inline-block; padding: 4px 10px; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #ff4c4c; border: 1px solid rgba(255,76,76,0.55); border-radius: 6px; background: rgba(255,76,76,0.12); transition: all 0.2s ease; }
+    .card > .row > div > label:hover { background: rgba(255,76,76,0.2); }
+    
+    .grid3 > .card > label{ display:inline-block; padding:4px 10px; margin-bottom:6px; font-size:12px; font-weight:600; color:#d2a24c; border:1px solid rgba(210,162,76,.55); border-radius:6px; background:rgba(210,162,76,.12); transition: all 0.2s ease; }
+    .grid3 > .card > label:hover { background: rgba(210,162,76,0.22); }
+    
+    .pvwrap > strong{ display:inline-block; padding:3px 8px; margin-bottom:6px; font-size:12px; font-weight:600; color:#2fa4a9; border:1px solid rgba(47,164,169,.5); border-radius:6px; background:rgba(47,164,169,.08); transition: all 0.2s ease;}
+    .pvwrap > strong:hover { background: rgba(47,164,169,0.2); }
+
+    /* AI Modal */
+    .modal{ position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; z-index:200; backdrop-filter:blur(5px); }
+    .modal.open{display:flex} .modal .box{ width:min(760px,92vw); background:#020617; border:1px solid var(--line); border-radius:16px; padding:14px; }
+    .grid-ai{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .toast{ position:fixed; right:18px; bottom:18px; background:#020617; border:1px solid var(--line); padding:10px 12px; border-radius:10px; opacity:0; transform:translateY(8px); transition:all .2s ease; z-index:9999; font-size:13px; color:#fff;}
+    .toast.show{ opacity:1; transform:none; }
+
+    /* ========== NRA His Evreni CSS ========== */
+    .neo-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center; z-index:1000; backdrop-filter:blur(5px); }
+    .neo-modal { background:#0f141a; border:1px solid rgba(255,255,255,0.08); border-radius:24px; width:95%; max-width:500px; padding:25px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.7); }
+    .neo-modal label { display:block; color:#aeb8c6; font-size:12px; font-weight:800; letter-spacing:0.8px; margin-bottom:8px; margin-top:15px; text-transform:uppercase; }
+    .neo-modal input, .neo-modal select { width:100%; background:#1a222c; border:1px solid #2a3441; border-radius:12px; padding:14px; color:#fff; font-size:14px; transition:0.3s; margin-bottom:5px; }
+
+    .his-modal-full { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.8); z-index:260; backdrop-filter:blur(8px); }
+    .his-modal-full.open { display:flex; }
+    .his-box-full { width:min(1100px, 96vw); max-height:92vh; background:#0b0f13; border:1px solid var(--line); border-radius:24px; padding:20px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
+    
+    .neo-actions, .neo-cats { display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+    .neo-catbtn, .neo-actionBtn { appearance:none; border:1px solid var(--line); background:#151a23; color:var(--text); padding:8px 14px; border-radius:12px; cursor:pointer; font-size:13px; font-weight:600; transition:0.2s; }
+    .neo-catbtn.active { background:var(--match); border-color:var(--accent-neo); color:#fff; }
+    .neo-actionBtn:hover { background:#1e2532; }
+    
+    .neo-search-wrap{position:relative; margin:5px 0;}
+    #neoQ{width:100%; background:#1a222c; color:#fff; border:1px solid var(--line); padding:14px 90px 14px 14px; border-radius:12px; outline:none; font-size:15px;}
+    .neo-clear-btn{position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.4); color:#ef4444; padding:5px 10px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:bold; display:none; transition: 0.2s;}
+    .neo-clear-btn:hover { background: rgba(239, 68, 68, 0.3); color: #fff; }
+
+    .neo-pool { border:1px dashed #2a3444; border-radius:16px; padding:15px; background:rgba(20,26,34,0.4); position:relative; flex:1; overflow:hidden; display:flex; flex-direction:column;}
+    .neo-chips { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:10px; overflow-y:auto; padding-right:5px; height: 100%; max-height: 450px;}
+    .neo-chip { background:var(--chip); border:1px solid var(--line); border-radius:12px; padding:12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:0.2s; color:#fff; font-size:14px;}
+    .neo-chip:hover { background:var(--chip-hover); border-color:var(--accent-neo); }
+    .neo-chip.pinned { border-color:var(--accent-neo); background:var(--chip-active); outline:2px solid #4ea9ff33; }
+    .fav-star { margin-left:auto; opacity:0.2; font-size:16px;} .fav-star.is-fav { opacity:1; color:var(--fav); }
+
+    .neo-previews{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0;}
+    .neo-prev{background:#11161d; border:1px solid var(--line); border-radius:12px; padding:12px; position:relative; min-height:80px;}
+    .neo-prev small{position:absolute; top:8px; left:12px; color:var(--muted); font-size:11px; font-weight:700;}
+    .neo-prev .val{font-size:15px; margin-top:24px; color:#fff; font-weight:500}
+    .neo-btn-group{position:absolute; right:8px; top:8px; display:flex; gap:5px}
+
+    .deriv-list { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:15px 0; max-height:200px; overflow-y:auto; }
+    .deriv-item { background:#161b22; padding:10px; border-radius:10px; border:1px solid var(--line); font-size:13px; display:flex; align-items:center; gap:5px; cursor:pointer; color:#fff;}
+
+    /* YUKARI ÇIK BUTONU STİLİ */
+    #poolScrollTop {
+        display: none; position: absolute; right: 20px; bottom: 20px; 
+        background: var(--accent-neo); color: #000; width: 40px; height: 40px; 
+        border-radius: 12px; cursor: pointer; z-index: 100; align-items: center; 
+        justify-content: center; font-weight: bold; font-size: 18px; 
+        box-shadow: 0 4px 15px rgba(78, 169, 255, 0.4); transition: 0.2s ease;
+    }
+    #poolScrollTop:hover { transform: translateY(-3px); filter: brightness(1.1); }
+  
+/* === BİRLEŞİK UYGULAMA: ilk veri paneli diğer panellerle birlikte kayar === */
+#masterInputPanel{box-shadow:0 18px 38px rgba(0,0,0,.60),0 0 0 1px rgba(78,169,255,.06);backdrop-filter:blur(14px) saturate(135%);}
+#globalScrollTop{display:none;position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:50%;border:1px solid #3b82f6;background:#0b1220;color:#60a5fa;font-size:20px;font-weight:900;cursor:pointer;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.45);align-items:center;justify-content:center;}
+#globalScrollTop:hover{transform:translateY(-2px);filter:brightness(1.15);}
+
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="logo-real">
+        <img src="4mş logo.png" alt="4mevsimşabloncu" onerror="this.src='https://via.placeholder.com/48/15b8a6/fff?text=4M'">
+      </div>
+      <h1>
+        <span>4mevsimşabloncu • NRAtölye</span>
+        <span>Videolarınıza Bilgi Girmenin En Kolay Yolu</span>
+      </h1>
+    </div>
+    <div class="actions">
+      <button id="btnBackup" class="btn" style="background:#1f2633; border-color:#222838;">📤 Yedekle</button>
+      <label class="pill">
+        📥 İçe Aktar
+        <input id="fileImport" type="file" accept=".json" style="display:none">
+      </label>
+    </div>
+  </header>
+
+  <div class="card" id="masterInputPanel">
+    <div class="row">
+      <div>
+        <label>Tür</label>
+        <select id="typeSel">
+          <option selected>Şarkı Videoları</option>
+          <option>Şiir Videoları</option>
+          <option>Öykü Videoları</option>
+          <option>Film Videoları</option>
+          <option>Ambiyans Videoları</option>
+        </select>
+      </div>
+      <div>
+        <label id="lblOwner">Şarkıcı</label>
+        <div class="input-wrap">
+          <input id="owner" placeholder="örn: Zeki Müren">
+          <button type="button" class="input-clear" data-clear="owner">✕</button>
+        </div>
+      </div>
+      <div>
+        <label id="lblWork">Şarkı Adı</label>
+        <div class="input-wrap">
+          <input id="work" placeholder="örn: Şimdi Uzaklardasın">
+          <button type="button" class="input-clear" data-clear="work">✕</button>
+        </div>
+      </div>
+      <div>
+        <label id="lblAlbum">Albüm / Playlist</label>
+        <div class="input-wrap">
+          <input id="album" placeholder="örn: https://www.youtube.com/playlist?list=...">
+          <button type="button" class="input-clear" data-clear="album">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-top:10px">
+      <div class="drop" id="dropTitle">
+        <div class="head">
+          <span id="labTitle" data-base="🎵 Standart Başlık">🎵 Standart Başlık Hashtag</span><span>▼</span>
+        </div>
+        <div class="menu" id="menuTitle"></div>
+      </div>
+      
+      <div class="drop" id="dropTitleAlt">
+        <div class="head">
+          <span id="labTitleAlt" data-base="🎵 Alternatif Başlık">🎵 Alternatif Başlık Hashtag</span><span>▼</span>
+        </div>
+        <div class="menu" id="menuTitleAlt"></div>
+      </div>
+
+      <div class="drop" id="dropDesc">
+        <div class="head">
+          <span id="labDesc" data-base="📝 Açıklama Hashtag">📝 Açıklama Hashtag</span><span>▼</span>
+        </div>
+        <div class="menu" id="menuDesc"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; display:flex; flex-direction:column; gap:15px;">
+        <div class="action-row">
+            <button id="btnGen" class="btn-act act-1">🎲 Şablon Oluştur</button>
+            <button id="btnShorts" class="btn-act act-2">🎬 YouTube Shorts Şablonu</button>
+            <button id="btnClearAll" class="btn-act act-3">🧹 Temizle</button>
+            <button id="btnAI" class="btn-act act-4">🤖 Akıllı Öneri Al</button>
+            <button type="button" class="btn-act act-6" onclick="requestUnifiedModule('assistant')">🧑‍💻 İçerik Asistanı</button>
+            <button type="button" class="btn-act act-5" onclick="requestUnifiedModule('prompt')">💽 Kapak Prompt Aracı</button> 
+            <button id="btnHisAra" type="button" class="btn-act act-7">🌹 NRA His Evreni</button>
+            <div class="input-wrap" style="flex:1; min-width:200px;">
+                <input type="text" id="hisSelected" class="input-kutucuk" placeholder="His Seçin veya Elle Yazın..." oninput="$('#feel').value=this.value; regenerate();">
+                <button type="button" class="input-clear" data-clear="hisSelected">✕</button>
+            </div>
+            <input type="hidden" id="feel">
+        </div>
+    </div>
+  </div> 
+
+  <div class="grid3" style="margin-top:10px">
+    <div class="card">
+      <label id="headTitle">Başlık</label>
+      <textarea id="outTitle" class="mono" readonly></textarea>
+      <div class="foot editbar">
+        <button class="btn" data-edit="outTitle">✏️ Düzenle</button>
+        <button class="btn" data-lock="outTitle" style="display:none">🔒 Kilitle</button>
+        <button class="btn" data-reset="outTitle">⟲ Temizle</button>
+        <span class="counter" id="ctTitle">0/100</span>
+      </div>
+    </div>
+    <div class="card">
+      <label id="headDesc">Açıklama</label>
+      <textarea id="outDesc" class="mono" readonly></textarea>
+      <div class="foot editbar">
+        <button class="btn" data-edit="outDesc">✏️ Düzenle</button>
+        <button class="btn" data-lock="outDesc" style="display:none">🔒 Kilitle</button>
+        <button class="btn" data-reset="outDesc">⟲ Temizle</button>
+        <span class="counter" id="ctDesc">0/5000</span>
+      </div>
+    </div>
+    <div class="card">
+      <label id="headPin">Sabit Yorum (<span id="lblTypeName">Şarkı Videoları</span>)</label>
+      <div class="inlineSel">
+        <span class="muted">Kayıtlı Yorum Seç:</span>
+        <select id="pinSelect">
+          <option value="default">Varsayılan Sabit Yorum</option>
+          <option value="1">Sabit Yorum 1</option>
+          <option value="2">Sabit Yorum 2</option>
+          <option value="3">Sabit Yorum 3</option>
+          <option value="4">Sabit Yorum 4</option>
+          <option value="5">Sabit Yorum 5</option>
+          <option value="6">Sabit Yorum 6</option>
+        </select>
+      </div>
+      <textarea id="outPin" class="mono" readonly></textarea>
+      <div class="foot editbar">
+        <button class="btn" data-edit="outPin">✏️ Düzenle</button>
+        <button class="btn" data-lock="outPin" style="display:none">🔒 Kilitle</button>
+        <button class="btn" data-reset="outPin">⟲ Temizle</button>
+        <span class="counter" id="ctPin">0/1000</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h3 style="margin:0 0 8px 0;color:#b5bcc9">🔍 Canlı Önizleme</h3>
+    <div class="preview3">
+      <div class="pvwrap core-title" style="display:none"><div id="pvTitle"></div></div>
+      <div class="pvwrap selectable active" data-mode="standard">
+        <button class="copy" data-target="pvTitleStd">📋 Kopyala</button>
+        <strong>Başlık (Standart)</strong>
+        <div id="pvTitleStd" class="pvblk mono"></div>
+      </div>
+      <div class="pvwrap selectable" data-mode="alt">
+        <button class="copy" data-target="pvTitleAlt">📋 Kopyala</button>
+        <strong>Başlık (Alternatif)</strong>
+        <div id="pvTitleAlt" class="pvblk mono"></div>
+      </div>
+      <div class="pvwrap pv-desc">
+        <button class="copy" data-target="pvDesc">📋 Kopyala</button>
+        <strong>Açıklama</strong>
+        <div id="pvDesc" class="pvblk mono"></div>
+      </div>
+      <div class="pvwrap">
+        <button class="copy" data-target="pvPin">📋 Kopyala</button>
+        <strong>Sabit Yorum</strong>
+        <div id="pvPin" class="pvblk mono"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="aiModal" class="modal" aria-hidden="true">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <h3 style="color:#fff;">🤖 Akıllı Öneri</h3>
+      <span class="badge" style="color:var(--muted); font-size:12px;">Yerel öneri motoru</span>
+    </div>
+    <div class="grid-ai">
+      <div class="card" style="padding:10px">
+        <label>Hızlı Öneri</label>
+        <textarea id="aiQuick" class="mono" readonly></textarea>
+        <div class="foot" style="justify-content:flex-start">
+          <button id="btnNext" class="btn" style="background:#1f2633;">↻ Başka Öneri</button>
+          <button id="btnApply" class="btn" style="background:#135e59; color:#5eead4;">✅ Uygula</button>
+        </div>
+      </div>
+      <div class="card" style="padding:10px">
+        <label>Yeni Öneri Ekle (kişisel)</label>
+        <textarea id="aiAdd" class="mono" placeholder="Kendine özel bir öneri yaz ve Kaydet de…"></textarea>
+        <div class="foot" style="justify-content:flex-start">
+          <button id="btnSave" class="btn" style="background:#1f2633;">💾 Kaydet</button>
+          <button id="btnUndo" class="btn" style="background:#1f2633;">🗑️ Son Ekleneni Sil</button>
+          <button id="btnClose" class="btn" style="background:#7c2d12; color:#fdba74;">Kapat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="hisModalFull" class="his-modal-full" aria-hidden="true">
+  <div class="his-box-full">
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <div style="display:flex; align-items:center; gap:15px;">
+        <img src="NRAtölyelogo.png" alt="Neo Logo" style="width:40px; height:40px; object-fit:contain;" onerror="this.style.display='none'">
+        <h2 style="margin:0; color:#fff;"> NRA His Evreni</h2>
+      </div>
+      <div class="neo-actions">
+        <button class="neo-actionBtn" style="background:var(--copy); color:#000;" onclick="applyNeoFeelAndClose()">✅ Seç ve Uygula</button>
+        <button class="neo-actionBtn" onclick="closeHisModal()">✕ Kapat</button>
+      </div>
+    </div>
+
+    <div class="neo-cats" id="neoCats">
+      <button class="neo-catbtn active" data-cat="all">🪶 Tümü</button>
+      <button class="neo-catbtn" data-cat="kalp">💞 Kalp</button>
+      <button class="neo-catbtn" data-cat="vatan">🇹🇷 Vatan</button>
+      <button class="neo-catbtn" data-cat="muzik">🎶 Müzik</button>
+      <button class="neo-catbtn" data-cat="atmosfer">🍃 Ambiyans</button>
+      <button class="neo-catbtn" data-cat="doku">🍂 Doku</button>
+      <button class="neo-catbtn" data-cat="mevsim">🌿 Mevsim</button>
+      <button class="neo-catbtn" data-cat="genel">📜 Genel</button>
+    </div>
+
+    <div class="neo-actions" style="margin-top:5px;">
+      <button class="neo-actionBtn" onclick="openSubModal('addModal')">➕ Yeni His</button>
+      <button class="neo-actionBtn" id="btnFavFilter" onclick="toggleFavFilter()">⭐ Favoriler</button>
+      <button class="neo-actionBtn" onclick="showDerivativesMenu()">🌱 Türev Üret</button>
+      <button class="neo-actionBtn" style="color:var(--accent-neo)" onclick="pickRandomFeel()">🎲 Rastgele Seç</button>
+
+      <button class="neo-actionBtn" onclick="openFileLoader()">📥 Excel / CSV Yükle</button>
+
+      <button class="neo-actionBtn" onclick="exportXLSX()">📤 Dışa Aktar</button>
+      <button class="neo-actionBtn" style="color:var(--danger)" onclick="resetNeoSystem()">🔄 Sistemi Sıfırla</button>
+    </div>
+
+    <div class="neo-previews">
+      <div class="neo-prev"><small>Seçili His (Şablona Aktarılacak)</small>
+        <div class="val" id="neoP1">—</div>
+        <div class="neo-btn-group">
+          <button class="neo-actionBtn" id="btnManage" style="display:none; padding:4px 8px; font-size:11px;" onclick="openEditModal()">⚙️ Düzenle</button>
+        </div>
+      </div>
+      <div class="neo-prev"><small>Arama / Filtreleme</small>
+        <div class="neo-search-wrap" style="margin-top:15px;">
+          <input id="neoQ" placeholder="Hislerde veya emojilerde ara..." oninput="applyNeoFilters()" />
+          <button class="neo-clear-btn" id="neoClearSearch" onclick="clearNeoInput()">✕</button>
+        </div>
+      </div>
+      <div class="neo-prev"><small>Durum</small>
+        <div class="val" id="neoRcStatus" style="color:var(--accent-neo); font-weight:bold;">Yükleniyor...</div>
+      </div>
+    </div>
+
+    <div class="neo-pool">
+      <div id="poolScrollTop" onclick="scrollPoolToTop()" title="Yukarı Çık">↑</div>
+      <div class="neo-chips" id="neoChips"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="neo-modal-overlay" id="alertModal">
+    <div class="neo-modal" style="text-align:center;">
+      <div id="alertIcon" style="font-size:50px; margin-bottom:10px;">⚠️</div>
+      <h3 id="alertTitle" style="color:#fff;">Uyarı</h3>
+      <p id="alertMsg" style="color:var(--muted); margin-bottom:20px; line-height:1.5;"></p>
+      <button class="neo-actionBtn" style="width:100%; background:var(--accent-neo); color:#000;" onclick="closeSubModals()">Anladım</button>
+    </div>
+</div>
+
+<div class="neo-modal-overlay" id="addModal">
+  <div class="neo-modal">
+    <h3 style="color:#fff;">✨ Yeni His Ekle</h3>
+    <label>SİMGE / EMOJİ</label><input type="text" id="newEmoji" placeholder="Örn: 🕊️">
+    <label>HİS BAŞLIĞI</label><input type="text" id="newTitle" placeholder="His başlığını yazın...">
+    <label>KATEGORİ</label>
+    <select id="newCat">
+        <option value="kalp">Duygular • Kalp Evreni</option>
+        <option value="vatan">Vatan Sevdalısı</option>
+        <option value="muzik">Müzik • Ses Evreni</option>
+        <option value="atmosfer">Ambiyans • Doğanın Dili</option>
+        <option value="doku">Doku • Duyusal Hisler</option>
+        <option value="mevsim">Mevsimler • Doğa Evreni</option>
+        <option value="genel">Genel</option>
+    </select>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="neo-actionBtn" style="flex:2; background:var(--copy); color:#000;" onclick="saveNewFeel()">💾 Ekle</button>
+        <button class="neo-actionBtn" style="flex:1;" onclick="closeSubModals()">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<div class="neo-modal-overlay" id="editModal">
+  <div class="neo-modal">
+    <h3 style="color:#fff;">⚙️ Hissi Düzenle</h3>
+    <label>SİMGE</label><input type="text" id="editEmoji">
+    <label>HİS BAŞLIĞI</label><input type="text" id="editTitle">
+    <label>KATEGORİ TAŞI</label>
+    <select id="editCat">
+        <option value="kalp">Duygular • Kalp Evreni</option>
+        <option value="vatan">Vatan Sevdalısı</option>
+        <option value="muzik">Müzik • Ses Evreni</option>
+        <option value="atmosfer">Ambiyans • Doğanın Dili</option>
+        <option value="doku">Doku • Duyusal Hisler</option>
+        <option value="mevsim">Mevsimler • Doğa Evreni</option>
+        <option value="genel">Genel</option>
+    </select>
+    <div style="display:grid; gap:10px; margin-top:20px;">
+        <button class="neo-actionBtn" style="background:var(--copy); color:#000;" onclick="updateFeel()">💾 Güncelle</button>
+        <button class="neo-actionBtn" style="background:var(--danger); color:#fff;" onclick="deleteFeel()">🗑️ Sil</button>
+        <button class="neo-actionBtn" onclick="closeSubModals()">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<div class="neo-modal-overlay" id="confirmModal">
+  <div class="neo-modal" style="text-align:center;">
+    <div id="confirmIcon" style="font-size:50px; margin-bottom:10px;">❓</div>
+    <h3 id="confirmTitle" style="color:#fff;">Emin misiniz?</h3>
+    <p id="confirmMsg" style="color:var(--muted); margin-bottom:20px; line-height:1.5;"></p>
+    <div style="display:flex; gap:12px;">
+        <button id="confirmYesBtn" class="neo-actionBtn" style="flex:1; background:var(--danger); color:#fff;">Evet, Onayla</button>
+        <button class="neo-actionBtn" style="flex:1;" onclick="closeSubModals()">Hayır, Vazgeç</button>
+    </div>
+  </div>
+</div>
+
+<div class="neo-modal-overlay" id="derivModal">
+    <div class="neo-modal">
+        <h3 style="color:#fff;">🌱 Türev Üret</h3>
+        <div class="deriv-list" id="derivList"></div>
+        <button class="neo-actionBtn" style="width:100%; background:var(--copy); color:#000" onclick="addSelectedDerivatives()">✅ Aktar</button>
+        <button class="neo-actionBtn" style="width:100%; margin-top:10px;" onclick="closeSubModals()">İptal</button>
+    </div>
+</div>
+
+<!-- İŞLEM ÖZETİ RAPOR MODALI (GÖRSELDEKİ TAM TASARIM) -->
+<div id="reportModal" class="neo-modal-overlay">
+  <div class="neo-modal" style="max-width: 380px; padding: 25px; text-align: center;">
+    <div style="display: inline-block; padding: 12px; border-radius: 16px; background: rgba(78, 169, 255, 0.1); box-shadow: 0 0 20px rgba(78, 169, 255, 0.25); margin-bottom: 15px;">
+      <span style="font-size: 32px;">📊</span>
+    </div>
+    <h2 style="margin: 0 0 20px 0; color: #fff; text-align: left; font-size: 22px;">İşlem Özeti</h2>
+    <div id="reportContent" style="background: #151a23; padding: 18px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--line); text-align: left;"></div>
+    <button class="neo-actionBtn" onclick="closeSubModals()" style="width: 100%; height: 48px; background: var(--accent-neo); color: #000; font-weight: bold; border-radius: 12px; font-size: 15px;">Tamamdır ✨</button>
+  </div>
+</div>
+
+<div id="toast" class="toast">Mesaj</div>
+
+<script>
+/* ========== 4MEVSİM ŞABLONCU MOTORU ========== */
+let activeTitleMode = "standard";
+const LSKEY = "4mevsim_neo_backup";
+const $  = (s)=>document.querySelector(s);
+const $$ = (s)=>document.querySelectorAll(s);
+
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg || "Tamam";
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2000);
+}
+
+function setCounter(sel, max, ctSel) {
+  const el = $(sel);
+  if (!el) return;
+  
+  const v = [...el.value].length; 
+  const ct = $(ctSel);
+  ct.textContent = `${v}/${max}`;
+  ct.className = "counter";
+  
+  const r = v / max;
+  if (r < 0.8) {
+    ct.classList.add("ok");
+  } else if (r <= 1.0) {
+    ct.classList.add("warn");
+  } else {
+    ct.classList.add("err");
+  }
+}
+
+const TITLE_TAGS=["#4mevsimşarkılar","#4mevsimşarkılarShorts","#shorts","#Müzik","#Kalp","#CanlıPerformans","#DikeyVideolar","#Radyo","#TV","#Piyano","#Guitar","#TürkçeMüzik","#Huzur","#Melankoli","#Romantik","#Nostalji","#Gece","#Yaz","#Kış","#Relax"].sort((a,b)=>a.localeCompare(b,"tr"));
+const DESC_TAGS=["#DiniMüzik","#Ambiance","#HuzurluAnlar","#Duygusal","#KalbeDokunanEzgiler","#KalptenGelenEzgiler","#KalptenGelenŞarkılar","#KalptenGelenTürküler","#Uyku","#Odaklanma","#NostaljikRadyoŞarkıları","#Doğasesleri","#Şiir","#VatanŞarkıları","#Soundtrack","#Sözler","#Şarkı","#TasavvufMüziği","#Shorts","#Arabesk","#TelevizyonOdasıŞarkıları","#Televizyon","#DamarŞarkılar","#DikeyVideolar","#Radyo","#Öykü","#Hikaye","#SesliÖyküler","#Kitaplık","#Türkiye","#AskeriMüzik","#THM","#TSM","#Türkü","#TürkHalkMüziği","#TürkSanatMüziği","#TürkFolkMüziği","#RelaxingMusic"].sort((a,b)=>a.localeCompare(b,"tr"));
+
+const TYPE_MAP={
+  "Şarkı Videoları":   { eser:"Şarkı", sahip:"Şarkıcı", feel:"Şarkı Hissi",  icon1:"🎵", icon2:"🎤" },
+  "Şiir Videoları":    { eser:"Şiir",  sahip:"Şair",    feel:"Şiir Hissi",   icon1:"📜", icon2:"🪶" },
+  "Öykü Videoları":    { eser:"Öykü",  sahip:"Yazar",   feel:"Öykü Hissi",   icon1:"📖", icon2:"✍️" },
+  "Film Videoları":    { eser:"Film",  sahip:"Yönetmen",feel:"Film Hissi",   icon1:"🎬", icon2:"🎥" },
+  "Ambiyans Videoları":{ eser:"Ortam", sahip:"—",       feel:"Atmosfer Hissi", icon1:"🍃", icon2:"🔥" }
+};
+
+const INTRO={
+  "Şarkı Videoları": "💞 Ruhunuzun en ince teline dokunan, kalbinizi derinden titreten şarkılarla yanınızdayız...\n🎶 Her notada huzur, her mısrada anlam var. Ruhunuzu besleyecek en özel şarkılar kanalımızda...",
+  "Şiir Videoları": "🪶 Duyguların sesini dizelere döken, kelimelerin büyüsünü taşıyan şiirlerle sizlerleyiz...\n🕊️ Her mısrada bir nefes, her kelimede bir anlam gizli...",
+  "Öykü Videoları": "📚 Hayatın içinden çıkan, duygulara dokunan öykülerle beraberiz...\n✨ Her satır bir yaşam, her öykü bir iz bırakır...",
+  "Film Videoları": "🎥 Hikâyelerin ve duyguların perdeye yansıdığı sinematik bir yolculuğa hazır mısınız?\n🌌 Her sahne bir anı, her replik bir duygu taşıyor...",
+  "Ambiyans Videoları": "🌿 Sessizlik + doğa sesi + huzurlu müzik = ruh için bir mola...\nDoğanın kalbinde bir akşam; suyun sesi, ateşin sıcaklığı ve huzurun yankısı..."
+};
+
+function getDynamicHashtags(type, owner, work, feel, isShorts) {
+    const toTag = (str) => {
+        if (!str || str === "—") return "";
+        return "#" + str.split(/\s+/).map(w => w.charAt(0).toLocaleUpperCase('tr-TR') + w.slice(1).toLocaleLowerCase('tr-TR')).join("");
+    };
+
+    const tagOwner = toTag(owner);
+    const tagWork = toTag(work);
+    const cleanFeel = feel ? feel.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '').trim() : "";
+    const tagFeel = toTag(cleanFeel);
+
+    const dynamicTags = [tagOwner, tagWork, tagFeel].filter(t => t !== "").join(" ");
+
+    if (isShorts) {
+        return `#4mevsimşarkılar #RuhumuDinlendirenŞarkılar ${dynamicTags} #CanlıPerformanslar #Nostalji #DuygusalŞarkılar #KalbeDokunanŞarkılar #MüzikKeyfi`.replace(/\s+/g, " ").trim();
+    }
+
+    let fixedPart = "";
+    switch (type) {
+        case "Şarkı Videoları":
+            fixedPart = `${dynamicTags} #CanlıPerformanslar #TürkçeŞarkılar #Nostalji #DuygusalŞarkılar #UnutulmayanŞarkılar #AşkaÖzlem #MüzikKeyfi #KalbeDokunanŞarkılar `;
+            break;
+        case "Şiir Videoları":
+            fixedPart = `${dynamicTags} #ŞiirDinle #ŞiirSokakta #SesliŞiir #DuygusalŞiirler #Edebiyat #FonMüziği #HüzünlüŞiirler #GeceyeBirŞiir #ŞiirHerYerde`;
+            break;
+        case "Öykü Videoları":
+            fixedPart = `${dynamicTags} #SesliKitap #SesliÖykü #Edebiyat #HikayeDinle #KitapDinle #Nostalji #SesliKütüphane #SafDuygular #HuzurluDinleti`;
+            break;
+        case "Film Videoları":
+            fixedPart = `#KıssadanVideolar ${dynamicTags} #Huşu #Maneviyat #Huzur #GününMesajı #AnlamlıSahneler`;
+            break;
+        case "Ambiyans Videoları":
+            const ambiyansTags = [tagWork, tagOwner, tagFeel].filter(t => t !== "").join(" ");
+            fixedPart = `#DoğaSesleri ${ambiyansTags} #GörselTerapi #Ambiyans #UykuMüziği #OdaklanmaMüziği #Meditasyon #RahatlatıcıSesler #YağmurSesi #ŞömineKeyfi #ASMR #Huzur #ZihinTemizliği`;
+            break;
+    }
+
+    return `#4mevsimşarkılar #RuhumuDinlendirenŞarkılar ${fixedPart}`.replace(/\s+/g, " ").trim();
+}
+
+const PIN_DEFAULT =
+`💬 Yorumlarınızla yalnız olmadığımızı hissediyor, daha iyisini yapmak için motive oluyoruz
+💖 Beğeni ve yorumlarınız bizim için çok kıymetli, desteğiniz için teşekkür ederiz 
+🎶 Ruhunuza iyi gelen videolar için abone olmayı, bildirimleri açamayı unutmayın
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+📺 Keyifli izlemeler!🌹`;
+
+const PIN_BANK_LONG={
+  "Şarkı Videoları":[
+`🎶 Şarkılar kalpleri birleştirir!  
+💞 Her yorumunuz, her beğeniniz bu melodilerin daha fazla kalbe ulaşmasına yardımcı oluyor.  
+🪶 Abone olarak müziğin büyüsüne siz de katılın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🎧 Keyifli dinlemeler!🌹`,
+`🎶 Müziğin birleştirici gücüyle buradayız.  
+💫 Her yorum ve beğeni, bu melodilerin daha fazla kişiye ulaşmasını sağlıyor.  
+🌙 Abone olup zili açmayı unutmayın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🎧 Keyifli dinlemeler!🌹`,
+`🎶 Her şarkıda ayrı bir anlam gizli.  
+💖 Beğeni ve yorumlarınızla desteğinizi gösterin, birlikte daha çok kişiye ulaşalım.  
+💧 Abone olup bildirimleri açmayı unutmayın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🎧 Keyifli dinlemeler!🌹`,
+`🎶 Yorumlarınızla yalnız olmadığımızı hissediyor, daha iyisini yapmak için motive oluyoruz.  
+💖 Beğeni ve yorumlarınız çok kıymetli, desteğinize teşekkür ederiz   
+🎵 Ruhunuza iyi gelen şarkılar içim abone olmayı, zili açmayı unutmayın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🎧 Keyifli dinlemeler!🌹`,
+`🎶 Yorumlarınız bizim için çok kıymetli. Beğeni ve yorumlarınız için teşekkür ederiz   
+💫 Ruhunuzu dinlendiren şarkılar için abone olup zili açabilirsiniz.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🎧 Keyifli dinlemeler!🌹`,
+`🎶 Her notada huzur, her mısrada duygu var.  
+🌸 Ruhunuzu besleyecek şarkılar için abone olup zili açmayı unutmayın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🎧 Keyifli dinlemeler!🌹`
+  ],
+  "Şiir Videoları":[
+`🪶 Şiirler kalpte yankılanan sessiz duygulardır...  
+🎙️ Her yorumunuz, her beğeniniz bu duyguların daha fazla kalbe ulaşmasına yardımcı olur.  
+📜 Abone olarak ruhunuzu dizelerin sıcaklığına bırakın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+💚 Huzurlu dinlemeler!🌹`,
+`🪶 Her kelime bir nefes, her dize bir duygu...  
+💫 Şiirlerin sessizliğinde buluşalım.  
+📖 Yorumlarınız bu dizeleri daha fazla kalbe ulaştırıyor.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+💚 Huzurlu dinlemeler!🌹`,
+`🪶 Her dize bir nefes...  
+💬 Yorumlarınız bu sesi duyurur.  
+💫 Abone olarak ruhunuzu aşkın ve duyguların en saf hâline bırakın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+💚 Huzurlu dinlemeler!🌹`,
+`🪶 Sözlerin bıraktığı izler uzun sürer.  
+💖 Beğeni ve yorumlarınla yanında ol.  
+💛 Abone ol, yeni şiirlerde buluşalım.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+💚 Huzurlu dinlemeler!🌹`,
+`🪶 Duygular kelimelere sığmaz, dizelerde yankılanır.  
+📜 Her yorum bu yankıyı çoğaltır.  
+💛 Abone olarak bu yolculukta bizimle olun.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+💚 Huzurlu dinlemeler!🌹`,
+`🪶 Her dizede bir kalp izi var...  
+💛 Beğeni ve yorumlarınla bu izleri güçlendir.  
+🌙 Abone ol, şiirlerin duygusunda buluşalım.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+💚 Huzurlu dinlemeler!🌹`
+  ],
+  "Öykü Videoları":[
+`📚 Her öyküde biraz biz varız.  
+📜 Yorumların bu yolculuğu uzatır.  
+🌙 Abone ol, yeni hikâyelerde buluşalım.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🕮 Keyifli Okumalar!🌹`,
+`📚 Bir cümle, bir anı...  
+✍️ Beğeni ve yorumlar, anlatının izini sürer.  
+💖 Abone olmayı ve zili açmayı unutmayın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🕮 Keyifli Okumalar!🌹`,
+`📚 Her hikâye bir yolculuk.  
+✍️ Yorumlarınla bu yolculuğa ortak ol.  
+💖 Yeni öyküler için abone ol.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🕮 Keyifli Okumalar!🌹`,
+`📚 Her öykü, bir ruhun yankısıdır.  
+💖 Desteğinle bu yankıyı büyütelim.  
+🌙 Abone ol, yeni hikâyelere adım atalım.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🕮 Keyifli Okumalar!🌹`,
+`📚 Kelimelerin arasında kaybol, duyguların içinde yeniden doğ.  
+✍️ Beğeni ve yorumların bu dünyayı büyütür.  
+⚡ Abone olmayı ve zili açmayı unutmayın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🕮 Keyifli Okumalar!🌹`,
+`📚 Her anlatı bir nefes, her dinleyici bir yol arkadaşı.  
+💖 Yorumlarınla bu hikâyeye ses ver.  
+⚡ Abone ol, birlikte devam edelim.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🕮 Keyifli Okumalar!🌹`
+  ],
+  "Film Videoları":[
+`🎬 Bir sahne, bin duygu.  
+✍️ Yorumlarınla yankıyı büyüt.  
+💙 Abone ol, yeni sahnelerde buluşalım.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🎞 Keyifli Seyirler!🌹`,
+`🎬 Anıların perdesi aralanıyor.  
+💖 Beğeni ve yorumlarınla yanımızda ol.  
+💙 Abonelik en büyük destek.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🎞 Keyifli Seyirler!🌹`,
+`🎬 Her sahne bir hikâye, her izleyici bir parça.  
+✍️ Sen de yorumunla bu hikâyeye dâhil ol.  
+⚡ Abone ol, yeni filmlerde buluşalım.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🎞 Keyifli Seyirler!🌹`,
+`🎬 Işıklar, kamera ve duygular birarada.  
+💖 Her yorum bu sahneleri canlandırır.  
+💙 Abone ol, yeni kadrajlarda buluşalım.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🎞 Keyifli Seyirler!🌹`,
+`🎬 Film kareleri, kalpler arasında köprü kurar.  
+✍️ Beğen ve yorum yap, bu köprüyü birlikte güçlendirelim.  
+💧 Abone ol, yeni anılarda buluşalım.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🎞 Keyifli Seyirler!🌹`,
+`🎬 Her film bir duygunun aynası.  
+💛 Yorumlarınla o duyguyu paylaş.  
+💧 Abone ol, yeni hikâyelere birlikte yürüyelim.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+🎞 Keyifli Seyirler!🌹`
+  ],
+  "Ambiyans Videoları":[
+`🌿 Doğanın melodisi kalpleri birleştirir.  
+💦 Her yorum ve beğeni, bu huzurlu anların daha fazla insana ulaşmasına yardımcı olur.  
+💧 Hangi atmosfer size en çok huzur veriyor?   
+🔴 Kanalımıza katılın, ruhunuzu ortamın ambiyansına bırakın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🍃 Keyifli dinlenmeler!🌹`,
+`🌿 Yorumlarınız içimizi ısıtıyor, çok mutlu oluyoruz.  
+🧡 Destek olmak isterseniz bir beğeni bırakın, birkaç kelime yazın, abone olmayı da unutmayın.  
+💦 Hep birlikte büyüyoruz!  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🍃 Keyifli dinlenmeler!🌹`,
+`🌿Görsel terapi ve doğanın melodisi birleşip müziğin gücüyle iyileştirir.  
+💦 Yorum ve beğenilerinle bu huzur daha çok kişiye ulaşsın.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🍃 Keyifli dinlenmeler!🌹`,
+`🌿 Ortamda saklı bir ambiyans...  
+✍️ Yorumlarınla bu anı derinleştir.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🍃 Keyifli dinlenmeler!🌹`,
+`🌿 Sessizlik, çıtırtı ve huzur…  
+✍️ Yorumlarınla bu atmosferi büyüt.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🍃 Keyifli dinlenmeler!🌹`,
+`🌿 Huzurun sesi ile ihya olun.  
+✍️ Yorumlarınla bu görsel ve işitsel terapiye  eşlik et.  
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1  
+🍃 Keyifli dinlenmeler!🌹`
+  ]
+}; 
+window.PIN_BANK_LONG = PIN_BANK_LONG;
+
+const selTitle = new Set();
+const selTitleAlt = new Set(); 
+const selDesc  = new Set();
+let shortsMode = false;
+
+function buildDrop(containerSel, menuSel, list, set, labelSel){
+  const grp  = $(containerSel);
+  const menu = $(menuSel);
+  const baseText = $(labelSel).getAttribute("data-base") || "Seçim Yap";
+  
+  const n = set.size;
+  $(labelSel).textContent = n ? `${baseText} (${n})` : baseText;
+  
+  if (!grp.dataset.init) {
+      grp.querySelector(".head").onclick = (e)=>{ grp.classList.toggle("open"); e.stopPropagation(); };
+      document.addEventListener("click",()=>grp.classList.remove("open"));
+      grp.dataset.init = "true";
+  }
+  
+  menu.innerHTML = "";
+
+  const topBar = document.createElement("div");
+  topBar.style = "display:flex; gap:5px; padding:6px 8px; border-bottom:1px solid var(--line); position:sticky; top:0; background:#020617; z-index:10;";
+  topBar.innerHTML = `
+    <button type="button" style="flex:1; background:rgba(34, 197, 94, 0.15); color:#4ade80; border:1px solid #22c55e; padding:6px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:bold; transition:0.2s;">✓ Hepsini Seç</button>
+    <button type="button" style="flex:1; background:rgba(239, 68, 68, 0.15); color:#f87171; border:1px solid #ef4444; padding:6px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:bold; transition:0.2s;">✕ Temizle</button>
+  `;
+  menu.appendChild(topBar);
+
+  topBar.children[0].onclick = (e) => {
+    e.stopPropagation();
+    list.forEach(t => set.add(t));
+    buildDrop(containerSel, menuSel, list, set, labelSel);
+    regenerate();
+  };
+
+  topBar.children[1].onclick = (e) => {
+    e.stopPropagation();
+    set.clear();
+    buildDrop(containerSel, menuSel, list, set, labelSel);
+    regenerate();
+  };
+
+  list.forEach(t=>{
+    const d = document.createElement("div"); 
+    d.className="opt"; 
+    d.textContent=t;
+    if(set.has(t)) { d.classList.add("active"); d.textContent = t + " ✓"; }
+    
+    d.onclick=(e)=>{
+      e.stopPropagation(); 
+      if(set.has(t)){ 
+          set.delete(t); d.classList.remove("active"); d.textContent = t; 
+      } else { 
+          set.add(t); d.classList.add("active"); d.textContent = t + " ✓"; 
+      }
+      const currN = set.size;
+      $(labelSel).textContent = currN ? `${baseText} (${currN})` : baseText;
+      regenerate();
+    };
+    menu.appendChild(d);
+  });
+}
+
+function labelize(){
+  const t = $("#typeSel").value; const m = TYPE_MAP[t];
+  $("#lblOwner").textContent = (t==="Ambiyans Videoları") ? "Ortam Adı" : m.sahip;
+  $("#lblWork").textContent  = (t==="Ambiyans Videoları") ? "Ambiyans Türü" : (m.eser+" Adı");
+  $("#lblTypeName").textContent = t;
+}
+
+function syncPreview(){
+  setCounter("#outTitle",100,"#ctTitle");
+  setCounter("#outDesc",5000,"#ctDesc");
+  setCounter("#outPin",1000,"#ctPin");
+
+  $("#pvTitle").textContent = $("#outTitle").value;
+  $("#pvTitleStd").textContent = $("#pvTitle").textContent;
+  $("#pvTitleAlt").textContent = renderTitleAltFromOut();
+  $("#pvDesc").textContent  = $("#outDesc").value;
+  $("#pvPin").textContent   = $("#outPin").value;
+}
+
+function renderTitleAltFromOut() {
+    const t = $("#typeSel").value;
+    const ownerInput = $("#owner").value.trim();
+    const workInput = $("#work").value.trim();
+    const feelInput = $("#hisSelected").value.trim();
+    const owner = ownerInput || "—";
+    const work = workInput || "—";
+    const feelVal = feelInput || "—";
+
+    let altT = "";
+    if(t === "Ambiyans Videoları"){
+        altT = `${owner} Ambiyansı — ${work} | ${feelVal}`; 
+    } else {
+        const sep = " – ";
+        altT = `${owner}${sep}${work} | ${feelVal}`; 
+    }
+
+    if(selTitleAlt.size > 0) {
+        altT += " " + [...selTitleAlt].join(" ");
+    }
+
+    if (t === "Öykü Videoları") {
+        altT = "📚 " + altT;
+    }
+
+    return altT;
+}
+
+function baseBlocks(){
+  const t = $("#typeSel").value; 
+  const ownerInput = $("#owner").value.trim(); 
+  const workInput  = $("#work").value.trim(); 
+  const feelInput  = $("#hisSelected").value.trim(); 
+  const album = $("#album").value.trim();
+  
+  const owner = ownerInput || "—";
+  const work  = workInput || "—";
+  
+  const feelVal = feelInput || "—"; 
+  const feelPlain = feelVal.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '').trim() || "—";
+
+  const ownerTag = ownerInput ? "#"+ownerInput.split(/\s+/).map(w=>w.charAt(0).toLocaleUpperCase('tr-TR')+w.slice(1).toLocaleLowerCase('tr-TR')).join("") : "";
+
+  let title = "";
+  if(t==="Ambiyans Videoları"){ 
+      title = `${owner} Ambiyansı — ${work} | ${feelVal} | #4mevsimşarkılar`; 
+  } else { 
+      const sep = " – "; 
+      title = `${owner}${sep}${work}${feelInput ? ` (${feelVal})`:""} | #4mevsimşarkılar ${ownerTag}`; 
+  }
+  if(selTitle.size) title += " " + [...selTitle].join(" ");
+
+  if (t === "Öykü Videoları") {
+      title = "📚 " + title;
+  }
+
+  let info="";
+  if(t==="Ambiyans Videoları"){ 
+      info = `🍃 Ortam Adı: ${owner}\n🎉 Ambiyans Türü: ${work}\n💚 Atmosfer Hissi: ${feelPlain}` + (album ? `\n💫 Ambiyans Listesi: ${album}` : ""); 
+  } else { 
+      const m = TYPE_MAP[t]; 
+      info = `${m.icon1} ${m.eser}: ${work}\n${m.icon2} ${m.sahip}: ${owner}\n💖 ${m.feel}: ${feelPlain}` + (album ? `\n💽 Albüm: ${album}` : ""); 
+  }
+
+  const middleDefault = INTRO[t];
+  
+  const staticBlock = `🔔 Huzur veren, ruhunuzu dinlendiren ve kalbe dokunan paylaşımlarımız için abone olup bildirimleri açmayı unutmayın: 💚
+👉 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+
+🎬 YOUTUBE KANALLARIMIZ
+   ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+🎶 Şarkılarla Merkez Kanalımız: #4mevsimşarkılar
+🔗 https://www.youtube.com/channel/UCipCjQD1NXNHy-T6Mf34jZg/?sub_confirmation=1
+
+📱 Şarkılardan kısa videolar: #4mevsimşarkılarShorts
+🔗 https://www.youtube.com/channel/UCpv6Nru_5tE8JlH3bx-IWRA/?sub_confirmation=1
+
+🌿 Doğa ve müzik: #4mevsimBeraberiz
+🔗 https://www.youtube.com/channel/UCc9vcQWtg0j9lojFps3H5sQ/?sub_confirmation=1
+
+📻 Radyo yayını: #4mevsimRadyo
+🔗 https://www.youtube.com/channel/UCNXZVXRVKXU50eUM24TSp-Q/?sub_confirmation=1
+
+📚 Öyküler Sesleniyor: #öYküTepsisi
+🔗 https://www.youtube.com/channel/UCShaJP_ctweQmINnZdJsBIQ/?sub_confirmation=1
+
+🪶 Kelimelerin Gizemli Dünyası: #KelimeDedektifi
+🔗 https://www.youtube.com/channel/UCOsZtet_rCKhGMorWq4rA6A/?sub_confirmation=1
+
+🎨 Tarih, şablon ve yapay zeka: #NRAtölye
+🔗 https://www.youtube.com/channel/UCocZBjSdGVdiKacdz5NtKCQ/?sub_confirmation=1
+
+📲 SOSYAL MEDYADA BİZ
+   ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+📸 Instagram: https://www.instagram.com/4mevsimsarkilari
+📘 Facebook: https://www.facebook.com/4mevsimsarkilari
+🐦 Twitter: https://twitter.com/4mevsimL
+🎵 TikTok: https://www.tiktok.com/@4mevsimsarkilari
+🚀 NSosyal: https://nsosyal.com/4mevsimsarkilar
+
+💕 ━━━━━━━ OYNATMA LİSTELERİMİZİ KEŞFEDİN ━━━━━━━ 💕
+🪶 https://www.youtube.com/@4mevsimsarkilar/playlists
+
+📝 Yorumlarınız bizim için çok kıymetli. Beğeni ve yorumlarınız için teşekkür ederiz ❤️❤️
+🎧 Keyifli dinlemeler!🌹
+💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕💕`;
+  
+  const fixedTags = getDynamicHashtags(t, ownerInput, workInput, feelInput, false);
+  let desc = `${info}\n\n${middleDefault}\n\n${staticBlock}`;
+  if(fixedTags) desc += `\n\n${fixedTags}`; 
+  if(selDesc.size) desc += `\n${[...selDesc].join(" ")}`; 
+  
+  return { title, desc };
+}
+
+function shortsBlocks(){
+  const t = $("#typeSel").value; 
+  const ownerInput = $("#owner").value.trim(); 
+  const workInput  = $("#work").value.trim(); 
+  const feelInput  = $("#hisSelected").value.trim();
+  
+  const owner = ownerInput || "—";
+  const work  = workInput || "—";
+  const feelVal = feelInput || "—"; 
+  const feelPlain = feelVal.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '').trim() || "—";
+  const m = TYPE_MAP[t];
+  
+  /* Shorts açıklama bilgi bloğunda his ismi emojiden arındırıldı (saf) */
+  const infoShort = (t==="Ambiyans Videoları") ? `🍃 Ortam Adı: ${owner}\n🎉 Ambiyans Türü: ${work}\n💚 Atmosfer Hissi: ${feelPlain}` : `${m.icon1} ${m.eser}:  ${work}\n${m.icon2} ${m.sahip}: ${owner}\n💖 ${m.feel}:  ${feelPlain}`;
+  const defaultShortMiddle = `💞 Ruhu dinlendiren en duygusal yansımalar.💝\n📌 Huzur veren paylaşımlar için  @4mevsimsarkilar 'ı takipte kalın.🕊️\n📝 Beğeni ve yorumlarınızla ailemize güç katın.💕\n🎧 Keyifli dinlemeler!🌹`;
+  return { infoShort, defaultShortMiddle };
+}
+
+function regenerate(){
+  const b = baseBlocks();
+  const ownerInput = $("#owner").value.trim();
+  const workInput  = $("#work").value.trim();
+
+  const btnKapak = document.querySelector('a[href*="Kapak Prompt Aracı"]');
+  if (btnKapak) {
+      btnKapak.href = `Video Kapak Prompt Aracı.html?s=${encodeURIComponent(ownerInput)}&e=${encodeURIComponent(workInput)}`;
+  }
+
+  if(shortsMode){
+    const {infoShort, defaultShortMiddle} = shortsBlocks();
+    const t = $("#typeSel").value; 
+    const feelInput  = $("#hisSelected").value.trim();
+    
+    const owner = ownerInput || "—";
+    const work  = workInput || "—";
+    const feelVal = feelInput || "—";
+    const ownerTag = ownerInput ? "#"+ownerInput.split(/\s+/).map(w=>w.charAt(0).toLocaleUpperCase('tr-TR')+w.slice(1).toLocaleLowerCase('tr-TR')).join("") : "";
+    
+    const titleTags = [...selTitle]; 
+    if(!titleTags.includes("#shorts")) titleTags.push("#shorts");
+    if(ownerTag && !titleTags.includes(ownerTag)) titleTags.push(ownerTag);
+    
+    let titleShort;
+    /* Başlıkta orijinal feelVal (emojili hali) muhafaza edildi */
+    if(t==="Ambiyans Videoları"){ titleShort = `${owner} Ambiyansı | ${work} | ${feelVal} ${titleTags.join(" ")}`; }
+    else{ titleShort = `${owner} – ${work}${feelInput?` (${feelVal})`:""} | #4mevsimşarkılar ${titleTags.join(" ")}`; }
+    
+    if (t === "Öykü Videoları") {
+        titleShort = "📚 " + titleShort;
+    }
+    
+    $("#outTitle").value = titleShort.trim();
+
+    const descTags = [...selDesc]; if(!descTags.includes("#Shorts")) descTags.push("#Shorts");
+    const fixed = getDynamicHashtags(t, ownerInput, workInput, feelInput, true);
+    $("#outDesc").value = `${infoShort}\n\n${defaultShortMiddle}\n\n${fixed}\n${descTags.join(" ")}`.trim();
+  }else{
+    $("#outTitle").value = b.title; 
+    $("#outDesc").value  = b.desc;
+  }
+  
+  const typ = $("#typeSel").value; const pk  = $("#pinSelect").value || "default";
+  const arr = PIN_BANK_LONG[typ] || PIN_BANK_LONG["Şarkı Videoları"];
+  if(pk==="default"){ $("#outPin").value = PIN_DEFAULT; }
+  else{ const idx = Math.max(1, Math.min(6, parseInt(pk,10))) - 1; $("#outPin").value = arr[idx] || arr[0]; }
+  
+  syncPreview();
+}
+
+function attachEditLock(){
+  $$("textarea").forEach(ta => {
+    if (!ta.dataset.listening) {
+      ta.addEventListener("input", syncPreview);
+      ta.dataset.listening = "true";
+    }
+  });
+
+  $$("[data-edit]").forEach(b => { 
+    b.onclick = () => { 
+      const id = b.getAttribute("data-edit"); 
+      const ta = document.getElementById(id); 
+      ta.readOnly = false; 
+      ta.classList.remove("lock"); 
+      b.style.display = "none"; 
+      b.parentElement.querySelector(`[data-lock='${id}']`).style.display = "inline-block"; 
+      ta.focus(); 
+    }; 
+  });
+  
+  $$("[data-lock]").forEach(b => { 
+    b.onclick = () => { 
+      const id = b.getAttribute("data-lock"); 
+      const ta = document.getElementById(id); 
+      ta.readOnly = true; 
+      ta.classList.add("lock"); 
+      b.style.display = "none"; 
+      b.parentElement.querySelector(`[data-edit='${id}']`).style.display = "inline-block"; 
+      syncPreview(); 
+    }; 
+  });
+  
+  $$("[data-reset]").forEach(b => { 
+    b.onclick = () => { regenerate(); }; 
+  });
+}
+
+function setupCopy(){ $$(".copy").forEach(b=>{ b.onclick=()=>{ const t = b.getAttribute("data-target"); const el = document.getElementById(t); navigator.clipboard.writeText(el.textContent).then(()=>toast("Kopyalandı")); }; }); }
+
+function initDrops(){ 
+    buildDrop("#dropTitle","#menuTitle",TITLE_TAGS,selTitle,"#labTitle"); 
+    buildDrop("#dropTitleAlt","#menuTitleAlt",TITLE_TAGS,selTitleAlt,"#labTitleAlt"); 
+    buildDrop("#dropDesc","#menuDesc",DESC_TAGS,selDesc,"#labDesc"); 
+}
+
+function localAI_generate(){
+  const openers = ["🎵 Ruhunuza dokunan bir ezgi..."]; const middles = ["Bu video, duyguların müziğe dönüştüğü bir anı paylaşıyor."]; const closes = ["Beğeni ve yorumlarınızla bize destek olmayı unutmayın 💖"];
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  return `${pick(openers)}\n\n${pick(middles)}\n\n${pick(closes)}`;
+}
+
+function applyAItoDesc(){
+  const newMid = ($("#aiQuick").value||"").trim() || localAI_generate();
+  const currentDesc = $("#outDesc").value;
+  $("#outDesc").value = currentDesc + `\n\n${newMid}`; 
+  syncPreview(); toast("Öneri uygulandı");
+}
+
+function addRandomCommentButton(){
+  if($("#btnRandomPin")) return;
+  function getRandomComment(category){
+    const arr = window.PIN_BANK_LONG?.[category];
+    if(!arr || !arr.length) return { text:"⚠️ Bu kategori için sabit yorum bulunamadı.", index:0 };
+    const rnd = Math.floor(Math.random() * arr.length);
+    return { text:arr[rnd], index:rnd+1 };
+  }
+  const outPin = $("#outPin");
+  if(!outPin) return;
+  const pinCard = outPin.closest(".card");
+  if(pinCard){
+    const randomBtn = document.createElement("button");
+    randomBtn.id = "btnRandomPin";
+    randomBtn.className = "btn-act act-4";
+    randomBtn.style.padding = "6px 12px";
+    randomBtn.style.height = "auto";
+    randomBtn.textContent = "🎲 Rastgele Yorum Seç";
+    randomBtn.style.marginTop = "8px";
+
+    randomBtn.onclick = ()=>{
+      const type = $("#typeSel")?.value || "Şarkı Videoları";
+      const data = getRandomComment(type);
+      outPin.value = data.text;
+      $("#pvPin").textContent = data.text;
+      const pinSelect = $("#pinSelect");
+      if(pinSelect && data.index>0){ pinSelect.value = data.index.toString(); }
+      toast(`🎲 Sabit Yorum ${data.index} seçildi!`);
+      syncPreview();
+    };
+
+    const foot = pinCard.querySelector(".foot") || pinCard;
+    foot.appendChild(randomBtn);
+  }
+}
+
+const LS_KEY_NEO = "nra_neo_evren_vfinal";
+
+function prepareInitialFeels() {
+    let initial = []; let idCounter = 0;
+    if(typeof RAW_DATA === 'undefined') {
+         return [];
+    }
+    for (let cat in RAW_DATA) { 
+        RAW_DATA[cat].forEach(item => { 
+            // Aynı başlığa sahip hislerin başlangıçta da mükerrer olmasını önler
+            if (!initial.some(x => x.t.toLowerCase() === item[1].toLowerCase())) {
+                initial.push({ id: ++idCounter, e: item[0], t: item[1], c: cat, fav: false }); 
+            }
+        }); 
+    }
+    return initial;
+}
+
+function loadNeoPool(){
+    let saved=null;
+    try { saved=JSON.parse(localStorage.getItem(LS_KEY_NEO)||'null'); } catch(e) { saved=null; }
+    const base=prepareInitialFeels();
+    if(!Array.isArray(saved) || saved.length===0) return base;
+    // Merge updated NRA-veriler.js data into existing local data without deleting favorites/custom records.
+    const merged=[...saved];
+    let maxId=merged.reduce((m,x)=>Math.max(m,Number(x.id)||0),0);
+    base.forEach(b=>{
+      const ex=merged.find(x=>(x.t||'').trim().toLocaleLowerCase('tr-TR')===b.t.trim().toLocaleLowerCase('tr-TR'));
+      if(ex){ if(!ex.e) ex.e=b.e; if(!ex.c) ex.c=b.c; }
+      else merged.push({...b,id:++maxId});
+    });
+    return merged;
+}
+let FEELS_NEO = loadNeoPool();
+try { localStorage.setItem(LS_KEY_NEO, JSON.stringify(FEELS_NEO)); } catch(e) {}
+let neoPinnedId = null; let neoActiveCat = 'all'; let neoFavOnly = false;
+
+function saveNeo() { localStorage.setItem(LS_KEY_NEO, JSON.stringify(FEELS_NEO)); if(window.parent&&window.parent!==window) window.parent.postMessage({source:'4mevsim-main',type:'FEEL_POOL_UPDATED',count:FEELS_NEO.length},'*'); }
+
+function openHisModal() { document.getElementById('hisModalFull').classList.add('open'); renderNeo(); }
+function closeHisModal() { document.getElementById('hisModalFull').classList.remove('open'); }
+function openSubModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeSubModals() { document.querySelectorAll('.neo-modal-overlay').forEach(m => m.style.display = 'none'); }
+
+function renderNeo() {
+  const container = document.getElementById('neoChips');
+  container.innerHTML = '';
+  const displayList = [...FEELS_NEO].sort((a,b) => a.t.localeCompare(b.t, 'tr'));
+  
+  displayList.forEach((f) => {
+    const chip = document.createElement('div');
+    chip.className = `neo-chip ${neoPinnedId === f.id ? 'pinned' : ''}`;
+    chip.dataset.search = (f.t + f.e).toLowerCase(); 
+    chip.dataset.id = f.id; chip.dataset.cat = f.c; chip.dataset.fav = f.fav;
+    chip.innerHTML = `<span style="font-size:18px;">${f.e}</span><span>${f.t}</span><span class="fav-star ${f.fav?'is-fav':''}" onclick="toggleFavNeo(event, ${f.id})">★</span>`;
+    
+    chip.onclick = () => {
+      if(neoPinnedId === f.id) { neoPinnedId = null; document.getElementById('neoP1').innerText = '—'; document.getElementById('btnManage').style.display='none';} 
+      else { neoPinnedId = f.id; document.getElementById('neoP1').innerText = `${f.e} ${f.t}`; document.getElementById('btnManage').style.display='inline-block';}
+      renderNeo();
+    };
+    container.appendChild(chip);
+  });
+  applyNeoFilters();
+}
+
+function applyNeoFilters() {
+    const q = document.getElementById('neoQ').value.toLowerCase().trim();
+    document.getElementById('neoClearSearch').style.display = q ? 'block' : 'none';
+    let count = 0;
+    document.querySelectorAll('.neo-chip').forEach(chip => {
+        const searchData = chip.dataset.search;
+        const catData = chip.dataset.cat;
+        const favData = chip.dataset.fav === 'true';
+        const visible = (neoActiveCat === 'all' || catData === neoActiveCat) && searchData.includes(q) && (!neoFavOnly || favData);
+        chip.style.display = visible ? 'flex' : 'none';
+        if(visible) count++;
+    });
+    document.getElementById('neoRcStatus').innerText = `${FEELS_NEO.length} his / ${count} sonuç`;
+}
+
+function clearNeoInput() { 
+    document.getElementById('neoQ').value = ''; 
+    applyNeoFilters(); 
+    document.getElementById('neoQ').focus(); 
+}
+
+function scrollPoolToTop() { 
+    document.getElementById('neoChips').scrollTo({top: 0, behavior: 'smooth'}); 
+}
+
+function toggleFavFilter() { neoFavOnly = !neoFavOnly; document.getElementById('btnFavFilter').classList.toggle('active', neoFavOnly); applyNeoFilters(); }
+function toggleFavNeo(e, id) { e.stopPropagation(); const idx = FEELS_NEO.findIndex(x => x.id === id); if(idx !== -1) { FEELS_NEO[idx].fav = !FEELS_NEO[idx].fav; saveNeo(); renderNeo(); } }
+
+function pickRandomFeel() {
+    if(FEELS_NEO.length === 0) return;
+    document.getElementById('neoQ').value = ''; neoActiveCat = 'all';
+    document.querySelectorAll('.neo-catbtn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.neo-catbtn[data-cat="all"]').classList.add('active');
+    const randomFeel = FEELS_NEO[Math.floor(Math.random() * FEELS_NEO.length)];
+    neoPinnedId = randomFeel.id;
+    document.getElementById('neoP1').innerText = `${randomFeel.e} ${randomFeel.t}`;
+    document.getElementById('btnManage').style.display = 'inline-block';
+    renderNeo(); 
+    setTimeout(() => { const target = document.querySelector(`.neo-chip[data-id="${randomFeel.id}"]`); if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+}
+
+function applyNeoFeelAndClose() {
+    if (neoPinnedId !== null) {
+        const f = FEELS_NEO.find(x => x.id === neoPinnedId);
+        const seciliMetin = `${f.e} ${f.t}`;
+        
+        $("#hisSelected").value = seciliMetin;
+        $("#feel").value = seciliMetin;
+        
+        const clearBtn = document.querySelector(`.input-clear[data-clear="hisSelected"]`);
+        if(clearBtn) clearBtn.style.display = 'block';
+        
+        regenerate();
+        try{ document.getElementById("hisSelected").dispatchEvent(new Event("input",{bubbles:true})); }catch(e){}
+        notifyUnified();
+        closeHisModal(); 
+        toast("His Başarıyla Aktarıldı!");
+    } else {
+        alert("Lütfen önce listeden bir his seçin!");
+    }
+}
+
+document.getElementById('neoCats').onclick = (e) => {
+    const btn = e.target.closest('.neo-catbtn'); if(!btn) return;
+    document.querySelectorAll('.neo-catbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); neoActiveCat = btn.dataset.cat; applyNeoFilters();
+};
+
+/* MANUEL TEKİL HİS EKLEME - MÜKERRER KONTROLÜ */
+function saveNewFeel(force = false) {
+    const t = document.getElementById('newTitle').value.trim();
+    if(!t) return;
+
+    // Aynı başlıkla başka his var mı?
+    const exists = FEELS_NEO.some(f => f.t.toLowerCase() === t.toLowerCase());
+
+    if(exists && !force) {
+        document.getElementById('confirmIcon').innerText = "⚠️";
+        document.getElementById('confirmTitle').innerText = "Zaten Mevcut";
+        document.getElementById('confirmMsg').innerText = `"${t}" başlığıyla bir his zaten kayıtlı. Yine de eklemek istiyor musunuz?`;
+        
+        document.getElementById('confirmYesBtn').onclick = () => {
+            saveNewFeel(true);
+        };
+        openSubModal('confirmModal');
+        return;
+    }
+
+    const newId = FEELS_NEO.length > 0 ? Math.max(...FEELS_NEO.map(f => f.id)) + 1 : 1;
+    FEELS_NEO.push({ id: newId, e: document.getElementById('newEmoji').value || "✨", t, c: document.getElementById('newCat').value, fav: false });
+    saveNeo(); renderNeo(); closeSubModals(); document.getElementById('newTitle').value = "";
+}
+
+function openEditModal() {
+    if(neoPinnedId === null) return; const f = FEELS_NEO.find(x => x.id === neoPinnedId);
+    document.getElementById('editEmoji').value = f.e; document.getElementById('editTitle').value = f.t; document.getElementById('editCat').value = f.c;
+    openSubModal('editModal');
+}
+
+/* MANUEL HİS DÜZENLEME - MÜKERRER KONTROLÜ */
+function updateFeel(force = false) {
+    const newT = document.getElementById('editTitle').value.trim();
+    if(!newT || neoPinnedId === null) return;
+
+    const exists = FEELS_NEO.some(f => f.t.toLowerCase() === newT.toLowerCase() && f.id !== neoPinnedId);
+
+    if (exists && !force) {
+        document.getElementById('confirmIcon').innerText = "⚠️";
+        document.getElementById('confirmTitle').innerText = "İsim Çakışması";
+        document.getElementById('confirmMsg').innerText = `"${newT}" ismi başka bir his tarafından kullanılıyor. Yine de güncellemek istiyor musunuz?`;
+        
+        document.getElementById('confirmYesBtn').onclick = () => {
+            updateFeel(true); 
+        };
+        openSubModal('confirmModal');
+        return; 
+    }
+
+    const idx = FEELS_NEO.findIndex(f => f.id === neoPinnedId);
+    if(idx !== -1) { 
+        FEELS_NEO[idx] = { ...FEELS_NEO[idx], e: document.getElementById('editEmoji').value, t: newT, c: document.getElementById('editCat').value }; 
+        saveNeo(); renderNeo(); closeSubModals(); document.getElementById('neoP1').innerText = `${FEELS_NEO[idx].e} ${newT}`; 
+    }
+}
+
+function deleteFeel() {
+    if(neoPinnedId === null) return;
+    FEELS_NEO = FEELS_NEO.filter(x => x.id !== neoPinnedId);
+    neoPinnedId = null; saveNeo(); renderNeo(); closeSubModals(); document.getElementById('neoP1').innerText = '—'; document.getElementById('btnManage').style.display='none';
+}
+
+function resetNeoSystem() {
+    document.getElementById('confirmMsg').innerText = "Tüm his verileri fabrika ayarlarına dönecek. Onaylıyor musunuz?";
+    document.getElementById('confirmYesBtn').onclick = () => { localStorage.removeItem(LS_KEY_NEO); location.reload(); };
+    openSubModal('confirmModal');
+}
+
+function showDerivativesMenu() {
+    if(neoPinnedId === null) { alert("Lütfen önce bir his seçin."); return; }
+    const base = FEELS_NEO.find(x => x.id === neoPinnedId);
+    const prefixes = ["Derin", "Gizemli", "Huzurlu", "Nostaljik", "Romantik"];
+    const listDiv = document.getElementById('derivList'); listDiv.innerHTML = '';
+    prefixes.forEach((pref, idx) => {
+        const newT = `${pref} ${base.t}`;
+        if(!FEELS_NEO.some(f => f.t === newT)) {
+            const item = document.createElement('div'); item.className = 'deriv-item';
+            item.innerHTML = `<input type="checkbox" id="d_${idx}" data-t="${newT}" data-e="${base.e}" data-c="${base.c}"> <label for="d_${idx}">${newT}</label>`;
+            listDiv.appendChild(item);
+        }
+    });
+    openSubModal('derivModal');
+}
+
+function addSelectedDerivatives() {
+    const checks = document.querySelectorAll('#derivList input:checked');
+    let currentMaxId = FEELS_NEO.length > 0 ? Math.max(...FEELS_NEO.map(f => f.id)) : 0;
+    checks.forEach(c => { 
+        if(!FEELS_NEO.some(f => f.t.toLowerCase() === c.dataset.t.toLowerCase())) {
+            FEELS_NEO.push({id: ++currentMaxId, e: c.dataset.e, t: c.dataset.t, c: c.dataset.c, fav: false});
+        }
+    });
+    saveNeo(); renderNeo(); closeSubModals();
+}
+
+function exportXLSX() {
+    const ws = XLSX.utils.json_to_sheet(FEELS_NEO.map(f => ({Emoji:f.e, His:f.t, Kategori:f.c})));
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Hisler");
+    XLSX.writeFile(wb, "NRA_His_Evreni.xlsx");
+}
+
+/* TOPLU EXCEL / CSV YÜKLEME - MÜKERRER KONTROLÜ VE İŞLEM ÖZETİ RAPORU */
+function openFileLoader() {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".csv, .xlsx, .xls";
+    
+    fileInput.onchange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = new Uint8Array(ev.target.result); 
+                const workbook = XLSX.read(data, { type: "array" });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                let addedCount = 0;
+                let duplicateCount = 0;
+                let skipCount = 0;
+                let currentMaxId = FEELS_NEO.length > 0 ? Math.max(...FEELS_NEO.map(f => f.id)) : 0;
+
+                const headers = ["emoji", "his", "his adı", "his ismi", "kategori", "category", "title"];
+
+                json.forEach((row, index) => {
+                    if (!row || row.length < 1) {
+                        skipCount++;
+                        return;
+                    }
+
+                    const rawE = (row[0] || "✨").toString().trim();
+                    const rawT = (row[1] || "").toString().trim();
+                    const rawC = (row[2] || "genel").toString().toLowerCase().trim();
+
+                    if (!rawT || headers.includes(rawT.toLowerCase())) {
+                        skipCount++;
+                        return;
+                    }
+
+                    // Mükerrer Kontrolü (Zaten evrende var mı?)
+                    if (!FEELS_NEO.some(f => f.t.toLowerCase() === rawT.toLowerCase())) {
+                        FEELS_NEO.push({ id: ++currentMaxId, e: rawE, t: rawT, c: rawC, fav: false });
+                        addedCount++;
+                    } else {
+                        duplicateCount++;
+                    }
+                });
+
+                saveNeo(); 
+                renderNeo();
+
+                // Görseldeki İşlem Özeti Modalının HTML Yapısı
+                const reportHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span style="color:var(--muted); font-size:14px;">✅ Yeni Eklenen</span>
+                        <span style="background:var(--copy); color:#000; padding:2px 10px; border-radius:20px; font-weight:bold; font-size:13px;">${addedCount}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span style="color:var(--muted); font-size:14px;">⚠️ Zaten Mevcut</span>
+                        <span style="background:var(--fav); color:#000; padding:2px 10px; border-radius:20px; font-weight:bold; font-size:13px;">${duplicateCount}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span style="color:var(--muted); font-size:14px;">📄 Başlık / Boş</span>
+                        <span style="background:var(--line); color:var(--muted); padding:2px 10px; border-radius:20px; font-weight:bold; font-size:13px;">${skipCount}</span>
+                    </div>
+                    <div style="margin-top:15px; padding-top:15px; border-top:1px dashed var(--line); display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:600; color:var(--accent-neo); font-size:14px;">Evrendeki Toplam</span>
+                        <b style="font-size:16px; color:#fff;">${FEELS_NEO.length} His</b>
+                    </div>
+                `;
+
+                document.getElementById('reportContent').innerHTML = reportHTML;
+                openSubModal('reportModal');
+                
+            } catch (err) {
+                alert("❌ Dosya işlenirken hata oluştu: " + err.message);
+            }
+        };
+
+        reader.readAsArrayBuffer(file);
+    };
+
+    fileInput.click();
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  initDrops(); attachEditLock(); setupCopy(); addRandomCommentButton(); 
+
+  /* 'X' TEMİZLEME BUTONLARI DİNLEYİCİSİ */
+  $$(".input-clear").forEach(btn => {
+      const targetId = btn.getAttribute("data-clear");
+      const inputEl = document.getElementById(targetId);
+      
+      if(inputEl && inputEl.value.length > 0) {
+          btn.style.display = "block";
+      }
+      
+      if(inputEl) {
+          inputEl.addEventListener("input", () => {
+              btn.style.display = inputEl.value.length > 0 ? "block" : "none";
+          });
+      }
+      
+      btn.addEventListener("click", () => {
+          inputEl.value = "";
+          btn.style.display = "none";
+          if(targetId === "hisSelected") {
+              const hiddenFeel = document.getElementById("feel");
+              if(hiddenFeel) hiddenFeel.value = "";
+          }
+          regenerate();
+          if(typeof notifyUnified==='function') notifyUnified();
+      });
+  });
+
+  /* YUKARI ÇIK (SCROLL TO TOP) BUTONU DİNLEYİCİSİ */
+  const neoChipsEl = document.getElementById('neoChips');
+  if (neoChipsEl) {
+      neoChipsEl.addEventListener('scroll', function() {
+          const btn = document.getElementById('poolScrollTop');
+          if (btn) {
+              btn.style.display = this.scrollTop > 80 ? 'flex' : 'none';
+          }
+      });
+  }
+
+  $("#typeSel").addEventListener("change",()=>{ labelize(); regenerate(); });
+  
+  ["owner","work","album"].forEach(id=>{ 
+      const el = document.getElementById(id);
+      if(el) el.addEventListener("input", regenerate); 
+  });
+  
+  $("#pinSelect").addEventListener("change",regenerate);
+
+  $("#btnGen").onclick=()=>{ shortsMode=false; regenerate(); toast("Şablon güncellendi"); };
+  $("#btnShorts").onclick=()=>{ shortsMode=true; regenerate(); toast("Shorts şablonu"); };
+  
+  $("#btnClearAll").onclick=()=>{ 
+      selTitle.clear(); selTitleAlt.clear(); selDesc.clear(); 
+      $$(".opt.active").forEach(o=> { o.classList.remove("active"); o.textContent = o.textContent.replace(" ✓", ""); }); 
+      ["owner","work","album","feel"].forEach(id=>{ 
+          document.getElementById(id).value=""; 
+          const btn = document.querySelector(`.input-clear[data-clear="${id}"]`);
+          if(btn) btn.style.display = "none";
+      }); 
+      $("#hisSelected").value=""; 
+      const hisBtn = document.querySelector(`.input-clear[data-clear="hisSelected"]`);
+      if(hisBtn) hisBtn.style.display = "none";
+      $("#pinSelect").value="default"; 
+      shortsMode=false; regenerate(); initDrops(); if(typeof notifyUnified==='function') notifyUnified(); toast("Temizlendi"); 
+  };
+
+  $("#btnBackup").onclick = () => {
+      const state = {
+        type: $("#typeSel").value,
+        owner: $("#owner").value,
+        work: $("#work").value,
+        album: $("#album").value,
+        feel: $("#hisSelected").value, 
+        titleTags: [...selTitle],
+        titleTagsAlt: [...selTitleAlt],
+        descTags: [...selDesc],
+        pinKey: $("#pinSelect").value,
+        neoFeels: FEELS_NEO 
+      };
+      const blob = new Blob([JSON.stringify(state)], {type: "application/json"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "4mevsim_tam_yedek.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast("Yedek İndirildi");
+  };
+
+  $("#fileImport").onchange = (e) => {
+      const f = e.target.files?.[0];
+      if(!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const st = JSON.parse(r.result);
+          if(st.type) $("#typeSel").value = st.type;
+          
+          ["owner", "work", "album"].forEach(id => {
+              if(st[id]) {
+                  const el = document.getElementById(id);
+                  el.value = st[id];
+                  const btn = document.querySelector(`.input-clear[data-clear="${id}"]`);
+                  if(btn) btn.style.display = "block";
+              }
+          });
+          
+          if(st.feel) { 
+              $("#feel").value = st.feel; 
+              $("#hisSelected").value = st.feel; 
+              const hisBtn = document.querySelector(`.input-clear[data-clear="hisSelected"]`);
+              if(hisBtn) hisBtn.style.display = "block";
+          }
+          
+          selTitle.clear(); (st.titleTags||[]).forEach(t => selTitle.add(t));
+          selTitleAlt.clear(); (st.titleTagsAlt||[]).forEach(t => selTitleAlt.add(t));
+          selDesc.clear(); (st.descTags||[]).forEach(t => selDesc.add(t));
+          if(st.pinKey) $("#pinSelect").value = st.pinKey;
+
+          if (st.neoFeels && Array.isArray(st.neoFeels) && st.neoFeels.length > 0) {
+              FEELS_NEO = st.neoFeels;
+              saveNeo();
+              renderNeo();
+          }
+          
+          initDrops(); labelize(); regenerate();
+          toast("Yedek Başarıyla Yüklendi");
+        } catch(err) { toast("Dosya okunamadı!"); }
+      };
+      r.readAsText(f);
+      e.target.value = ""; 
+  };
+
+  $("#btnHisAra").addEventListener("click", openHisModal);
+  
+  $("#btnAI").onclick = () => { $("#aiModal").classList.add("open"); $("#aiQuick").value = localAI_generate(); };
+  $("#btnClose").onclick = () => { $("#aiModal").classList.remove("open"); };
+  $("#btnNext").onclick = ()=>{ $("#aiQuick").value = localAI_generate(); };
+  $("#btnApply").onclick = ()=>{ applyAItoDesc(); $("#aiModal").classList.remove("open"); };
+
+  labelize(); regenerate();
+});
+</script>
+
+<button id="globalScrollTop" type="button" title="Yukarı Çık">↑</button>
+<script>
+// ============================================================
+// ANA PROGRAM KALICILIK + TEK YÖNLÜ SENKRON
+// ============================================================
+function getMainProjectState(){
+  return {
+    type:$('#typeSel')?.value||'',
+    artist:$('#owner')?.value||'',
+    song:$('#work')?.value||'',
+    feel:$('#hisSelected')?.value||''
+  };
+}
+function notifyUnified(){
+  if(window.parent && window.parent!==window){
+    window.parent.postMessage({source:'4mevsim-main',type:'PROJECT_UPDATE',data:getMainProjectState()},'*');
+  }
+}
+function applyUnifiedProject(data){
+  // Güvenlik: Ana Program, alt modüllerden PROJECT_STATE kabul etmez.
+  return;
+}
+window.addEventListener('message',e=>{
+  const d=e.data||{};
+  if(d.type==='REQUEST_MAIN_STATE') notifyUnified();
+});
+// Ana programdaki 4 temel alan kalıcıdır ve alt modüllere yayınlanır.
+['typeSel','owner','work','hisSelected'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el){
+    ['input','change'].forEach(ev=>el.addEventListener(ev,notifyUnified));
+  }
+});
+// Global yukarı çık butonu.
+(function(){
+  const b=document.getElementById('globalScrollTop');
+  const update=()=>{const y=document.documentElement.scrollTop||document.body.scrollTop||0; b.style.display=y>350?'flex':'none';};
+  window.addEventListener('scroll',update,{passive:true});
+  b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  update();
+})();
+
+// Açılışta Ana Program daima temiz başlar; mevcut boş durumu alt modüllere yayınla.
+try{ if(typeof labelize==='function') labelize(); if(typeof regenerate==='function') regenerate(); }catch(e){}
+setTimeout(notifyUnified,120);
+
+// Ana program butonları: index altındaysa yalnızca navigasyon mesajı gönderir.
+// Tek başına açılırsa modül dosyasına gider.
+function requestUnifiedModule(name){
+  if(name!=='assistant' && name!=='prompt') return;
+  try{
+    if(window.parent && window.parent!==window){
+      window.parent.postMessage({source:'4mevsim-main',type:'NAVIGATE_MODULE',module:name},'*');
+      return;
+    }
+  }catch(e){}
+  const target=name==='assistant'?'Dijital İçerik Asistanı.html':'Video Kapak Prompt Aracı.html';
+  window.location.href=target;
+}
+</script>
+</body>
+</html>
