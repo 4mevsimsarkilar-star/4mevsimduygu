@@ -767,7 +767,21 @@ function closeFullscreen() {
 }
 
 document.getElementById("useBrush").addEventListener("change", function() {
-    document.getElementById("brushOptions").style.display = this.checked ? "block" : "none";
+    const brushOptions = document.getElementById("brushOptions");
+    const brushInput = document.getElementById("brushStyle");
+    brushOptions.style.display = this.checked ? "block" : "none";
+
+    // Bölüm ilk kez açıldığında, seçim yoksa 1. fırça stilini varsayılan seç.
+    if (this.checked && !brushInput.value.trim()) {
+        const firstBrush = brushOptions.querySelector(".chips-container .chip");
+        if (firstBrush) {
+            const allBrushChips = brushOptions.querySelectorAll(".chips-container .chip");
+            allBrushChips.forEach(chip => chip.classList.remove("selected"));
+            firstBrush.classList.add("selected");
+            brushInput.value = "thick expressive impasto oil paint brush strokes with rich texture";
+            if (typeof autoGrow === "function") autoGrow(brushInput);
+        }
+    }
     updatePrompts();
 });
 
