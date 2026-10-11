@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NRAtölye PRO • NRA Prompt Aracı V6.8 (Studio)</title>
+<title>NRAtölye PRO • NRA Prompt Aracı V7.0 (Studio)</title>
 
 <style>
 /* ========== v6.8 NRA HİS EVRENİ GÖRSEL TEMASI ========== */
@@ -282,7 +282,7 @@ input[type=range]::-moz-range-thumb {
         <div class="logo-real">
             <img src="NRAtölyelogo.png" alt="NR" onerror="this.src='https://via.placeholder.com/80/14b8a6/fff?text=NR'">
         </div>
-        <h2>NRAtölye PRO • NRA Prompt Aracı V6.8 (Studio)</h2>
+        <h2>NRAtölye PRO • NRA Prompt Aracı V7.0 (Studio)</h2>
     </header>
 
     <div class="main-card">
@@ -355,6 +355,15 @@ input[type=range]::-moz-range-thumb {
                 <button class="chip" onclick="selectIcon('a glowing cinematic neon border frame', this)">🔲 Neon Işıklı Çerçeve</button>
                 <button class="chip" onclick="selectIcon('a bold glowing YouTube play button or massive 3D arrow', this)">▶️ 3D Ok & Play Butonu</button>
                 <button class="chip" onclick="selectIcon('a majestic 3D musical staff starting with a treble clef, spiraling inward into a deep perspective tunnel, notes vanishing into the distance with a glowing motion blur', this)">🎼 Nota Tüneli (3D)</button>
+                <!-- Ferman ZIP'inden esinlenen yeni metinsel simgeler: görseller dosya olarak eklenmez. -->
+                <button class="chip" onclick="selectIcon('a faded antique archival parchment sheet with rough visible paper fibers subtle folds irregular beige discoloration and aged water stains', this)">📄 Solgun Arşiv Parşömeni</button>
+                <button class="chip" onclick="selectIcon('a heavily weathered medieval parchment with torn ragged edges frayed paper fibers deep creases cracked patina and dark sepia stains', this)">📜 Yırtık Kenarlı Pürüzlü Ferman</button>
+                <button class="chip" onclick="selectIcon('a wrinkled old decree page surrounded by a dark distressed wooden border with rusty iron corner pins rough cracked grain and deep fold lines', this)">🧷 Çivili Ahşap Kenarlı Ferman</button>
+                <button class="chip" onclick="selectIcon('a two-tone antique paper surface with a dark mottled rough upper area fading into dusty pale parchment below with granular stains and coarse fibrous texture', this)">🟤 Mottolu Pürüzlü Kâğıt</button>
+                <button class="chip" onclick="selectIcon('an antique parchment panel with an ornate baroque engraved border tarnished gold leaf rubbed gilding uneven patina and weathered sepia paper', this)">🏛️ Barok Altın Varaklı Parşömen</button>
+                <button class="chip" onclick="selectIcon('a rough medieval parchment scroll with curled rolled ends uneven torn sides darkened edges cracked patina and visible aged paper fibers', this)">🪶 Kıvrık Uçlu Eskitilmiş Ferman</button>
+                <button class="chip" onclick="selectIcon('a dark embossed antique scroll with deep crimson rolled ends rough black ornamental texture worn metal details and dramatic aged shadows', this)">⚫ Koyu Kabartmalı Kırmızı Rulo Ferman</button>
+                <button class="chip" onclick="selectIcon('a regal antique gold panel with embossed ornamental top and bottom decorations tarnished gold leaf amber-stained parchment center and weathered vintage edges', this)">👑 Eskitilmiş Saray Altın Paneli</button>
             </div>
         </div>
 
@@ -527,43 +536,153 @@ input[type=range]::-moz-range-thumb {
 </div>
 
 <script>
-const promptsData = Array.from({length: 39}, (_, i) => `p${i+1}`);
+const promptsData = Array.from({length: 45}, (_, i) => `p${i+1}`);
 
 const titles = [
-    "🏹 Sinematik Anadolu", "🌟 Altın Sıcaklığı", "🎭 Dramatik Noir", "🌹 Bahar Gülü", "🕌 İlahi Işık", 
-    "☔ Huzurlu Yağmur", "🔥 Kor Kırmızı", "🇹🇷 Vatan Sevdası", "📜 Klasik Öykü", "🔍 Gerilimli Harfler", 
-    "🕊️ Bilgelik Odası", "🎞️ Yeşilçam Ruhu", "🎸 Sahne Işığı",
-    "🏛️ Antik Sütunlar", "🌑 Derin Gece", "🏙️ Siber Şehir", "💎 Elit Mermer", "🌊 Okyanus Sesi", 
-    "🔥 Anka Kuşu", "🎡 Karnaval", "🍃 Doğa Akustiği", "⛪ Gotik Ruh", "🛸 Gelecek Çağ", 
-    "🎨 Sanat Tuvali", "🎻 Klasik Senfoni", "🌌 Galaksi", "🎙️ Podcast / Gönderi", "☕ Akustik Stüdyo",
-    "🌌 Galaktik Sonsuzluk", "🌇 Kızıl Günbatımı",
-    "📺 YouTube Çarpıcı Kapak", "🚨 YouTube Aksiyon/Şok", "🕵️ YouTube Gerilim/Merak",
-    "🪵 Akustik Yağlı Boya", "🎬 Sinematik Akustik Boya", "🎧 Lofi Akustik Boya",
-    "🔥 Sahne Ateşi & Işıltı", "🌌 Epik Nota Tüneli", "🥀 Nostaljik Gül & Varak"
+    "🎬 Sinematik Anadolu",
+    "🌟 Altın Sıcaklığı",
+    "🎭 Dramatik Noir",
+    "🌹 Bahar Gülü",
+    "🕌 İlahi Işık",
+    "☔ Huzurlu Yağmur",
+    "🔥 Kor Kırmızı",
+    "🇹🇷 Vatan Sevdası",
+    "📜 Klasik Öykü",
+    "📜 Eskitilmiş Parşömen & Altın Varak",
+    "🔍 Gizemli Harfler",
+    "🕊️ Bilgelik Odası",
+    "🎞️ Yeşilçam Ruhu",
+    "🎸 Sahne Işığı",
+    "🏛️ Antik Mermer",
+    "🌑 Derin Gece",
+    "🏙️ Siber Neon",
+    "💎 Elit Lüks",
+    "🌊 Okyanus Sesi",
+    "🔥 Anka Ateşi",
+    "🎡 Karnaval",
+    "🍃 Doğa Akustiği",
+    "⛪ Gotik Ruh",
+    "🛸 Gelecek Çağ",
+    "🎨 Sanat Tuvali",
+    "🎻 Klasik Senfoni",
+    "🌌 Galaksi",
+    "🎙️ Podcast Stüdyo",
+    "☕ Akustik Lofi",
+    "🌌 Galaktik Sonsuzluk",
+    "🌇 Kızıl Günbatımı",
+    "📺 YouTube Etkisi",
+    "🚨 YouTube Aksiyon",
+    "🕵️ YouTube Gerilim",
+    "🪵 Akustik Ahşap & Yağlı Boya",
+    "🪵 Sinematik Ahşap & Yağlı Boya",
+    "🎧 Lofi Neon Ahşap & Boya",
+    "🔥 Sahne Ateşi & Işıltı",
+    "🌌 Epik Nota Tüneli",
+    "🥀 Nostaljik Gül & Varak",
+    "📻 Retro Radyo & Anadolu Hatırası",
+    "🌺 Osmanlı Gül Bahçesi & Altın Işık",
+
+    "🎤 Nostaljik Mikrofon & Duygusal İfade",
+    "🎞️ Yeşilçam Portresi & Hasret Bakışı",
+    "📻 Plak Işıltısı & İçten Performans"
 ];
 
 const trDescriptions = [
-    "Kültürel dokulu sinematik Anadolu tarzı.", "Sıcak altın tonları ve parıltılar.", "Ağır gölgeli, duygusal dramatik ruh hali.", "Romantik gün ışığı ve gül estetiği.", "Huzurlu manevi fon ve ilahi atmosfer.", 
-    "Yağmurlu lofi rahatlama ortamı.", "Siyah fon üzerine neon kırmızı odaklar.", "Şanlı bayrak ve kahramanlık ışığı.", "Eski radyo ve kitaplık temalı edebi hava.", "Havada süzülen gerilimli 3D harfler.", 
-    "Manevi sohbetler için Rembrandt ışığı.", "Nostaljik gramofon ve eski dönem havası.", "Canlı konser ve enerjik sahne ışıkları.",
-    "Tarihi sütunlar ve görkemli epik fon.", "Sokak tarzı derin ve karanlık atmosfer.", "Fütüristik neon ve teknolojik müzik.", "Lüks mermer ve altın detaylı tasarım.", "Mavi tonlarda ferah deniz estetiği.", 
-    "Alevli ve küllerinden doğan görkemli tema.", "Rengarenk ve hareketli festival havası.", "Yeşil ve doğal akustik tınılar.", "Gotik mimari ve ruhani ışık oyunları.", "Holografik ve ileri teknoloji.", 
-    "Yağlı boya tablo dokusunda artistik kapak.", "Görkemli orkestra ve kadife fonlar.", "Yıldızlar arası sonsuzluk ve nebula.", "Antik mikrofon ve dört mevsim.", "Sıcak ahşap, bokeh ışıkları ve lofi samimiyeti.",
-    "Derin uzay, nebulalar ve yıldız tozlarıyla dolu kozmik atmosfer.", "Turuncu ve kızıl tonların hakim olduğu huzurlu günbatımı.",
-    "Devasa 3D yazılar ve gerçeküstü arkaplanlı popüler YouTube stili.", "Hareketli, ateşli ve yüksek heyecanlı YouTube aksiyon stili.", "Karanlık gölgeler ve neon ışıklarla merak uyandıran YouTube stili.",
-    "Sıcak ahşap ve yağlı boya fırça darbelerinin mükemmel uyumu.", "Dramatik ışıklarla zenginleştirilmiş ahşap ve sanatsal doku.", "Modern neon yansımalarla harmanlanmış ahşap yağlı boya.",
-    "Sanatçıyı çevreleyen yoğun sahne ışıkları ve altın ateş parıltıları.", "Derinliğe uzanan 3D nota tüneli ve büyüleyici sahne atmosferi.", "Klasik çini desenli bordür, canlı kırmızı güller ve altın varak dokunuşlar."
+    "Anadolu kültürü, sıcak toprak tonları ve sinematik derinlikle sanatçıyı öne çıkarır.",
+    "Altın saat ışığı, sıcak parıltılar ve zengin gün batımı atmosferi.",
+    "Koyu gölgeler, sert ışık ve gizemli noir sinema görünümü.",
+    "Kırmızı güller, yeşil yapraklar ve romantik gün ışığıyla canlı aşk atmosferi.",
+    "Huzurlu manevi ışık, derin gölgeler ve görkemli ilahi atmosfer.",
+    "Yağmur, ıslak yansımalar, mavi tonlar ve sakin gece duygusu.",
+    "Siyah zemin, yoğun kırmızı ışık ve ateş/köz parıltılarıyla güçlü kontrast.",
+    "Türk bayrağı dokuları, kırmızı-altın ışık ve kahramanlık atmosferi.",
+    "Eski kitaplar, ahşap, sıcak amber ışığı ve klasik hikâye anlatıcılığı hissi.",
+    "Yıpranmış kâğıt/parşömen kenarlar, altın varak, eski baskı patinası ve süslü çerçeve.",
+    "Karanlık fonda havada süzülen parlak harfler ve gizemli sinematik ışık.",
+    "Kitaplar, sıcak Rembrandt ışığı ve bilgelik/sohbet atmosferi.",
+    "Eski Türk sineması renkleri, film halasyonu ve nostaljik görüntü dokusu.",
+    "Konser sahnesi, güçlü spot ışıkları, altın kıvılcımlar ve canlı performans enerjisi.",
+    "Beyaz mermer, altın damarlar ve güçlü güneş ışığıyla görkemli klasik estetik.",
+    "Karanlık şehir, ıslak zemin ve parlak neon yansımalarıyla derin gece havası.",
+    "Fütüristik şehir, elektrik mavisi ve neon pembe ışıklarla siber atmosfer.",
+    "Koyu mermer, parlak altın damarlar ve temiz premium lüks görünüm.",
+    "Biyolüminesans mavi deniz, dalgalar ve derin okyanus atmosferi.",
+    "Kızıl-turuncu alevler, közler ve küller içinden doğan epik enerji.",
+    "Renkli neon ışıklar, hareket ve festival coşkusuyla enerjik atmosfer.",
+    "Yeşil doğa, altın saat ışığı ve huzurlu akustik müzik duygusu.",
+    "Soğuk taş, koyu gölgeler ve mavi ruhani ışıklarla gotik atmosfer.",
+    "Bembeyaz fütüristik yüzeyler, camgöbeği hologramlar ve temiz teknoloji hissi.",
+    "Yoğun yağlı boya dokuları, canlı renkler ve gerçek sanat tuvali etkisi.",
+    "Kadife sahne perdeleri, altın spot ışıkları ve klasik müzik zarafeti.",
+    "Nebula, yıldız tozu ve mor-pembe ışıklarla görkemli galaktik atmosfer.",
+    "Sıcak akustik panel, mikrofon ve yumuşak neonlarla samimi profesyonel stüdyo.",
+    "Sıcak ahşap, yumuşak bokeh ve sakin lofi müzik hissi.",
+    "Derin uzay, yoğun nebulalar ve yıldız tozlarıyla sonsuz kozmik atmosfer.",
+    "Turuncu-kızıl gökyüzü, güçlü ufuk ışığı ve dramatik gün batımı.",
+    "Yüksek kontrast, büyük 3D yazı ve dikkat çekici YouTube küçük resim estetiği.",
+    "Ateş, hareket ve güçlü sarı-beyaz tipografiyle yüksek enerjili YouTube görünümü.",
+    "Karanlık gölgeler, neon ışıklar ve gizem hissi veren merak uyandırıcı YouTube tasarımı.",
+    "Sıcak doğal ahşap, yağlı boya dokusu ve samimi akustik tablo havası.",
+    "Koyu cilalı ahşap, kalın yağlı boya kabartıları ve dramatik amber ışık.",
+    "Ahşap yüzey, neon yansımalar, boya dokuları ve modern lofi atmosferi.",
+    "Yoğun sahne ışıkları, altın ateş parıltıları ve sanatçıyı çevreleyen güçlü konser atmosferi.",
+    "Dev 3D nota tüneli, altın notalar ve derin perspektifle büyüleyici müzikal sahne.",
+    "Klasik çini bordür, kırmızı güller, altın varak ve zamansız romantik nostalji.",
+    "Eski radyo, sıcak ahşap, analog ışıklar ve Anadolu hatıralarıyla nostaljik müzik atmosferi.",
+    "Zümrüt yapraklar, kadife kırmızı güller, Osmanlı esintili motifler ve yumuşak altın ışıklarla zarif romantizm.",
+
+    "Vintage mikrofon, gözleri nazikçe kapalı duygusal ifade, amber sahne sisi ve altın başlıkla nostaljik müzik kapağı.",
+    "Yeşilçam filmi sıcaklığı, hafif nemli hasret bakışı, yumuşak film ışığı ve altın tipografiyle duygusal portre.",
+    "Retro radyo ve plak atmosferi, içten şarkı söyleme mimiği, sıcak bokeh ve zarif altın yazıyla hatıra duygusu."
 ];
 
 const categoriesMap = [
-    "cinematic", "epic", "cinematic", "nature", "epic", 
-    "nature", "epic", "epic", "cinematic", "epic", 
-    "cinematic", "cinematic", "music", "epic", "cinematic", 
-    "epic", "art", "nature", "epic", "epic", 
-    "nature", "epic", "epic", "art", "music", 
-    "epic", "music", "music", "epic", "nature", 
-    "youtube", "youtube", "youtube", "art", "art", "art",
-    "music", "epic", "art"
+    "cinematic",
+    "epic",
+    "cinematic",
+    "nature",
+    "epic",
+    "nature",
+    "epic",
+    "epic",
+    "cinematic",
+    "art",
+    "epic",
+    "cinematic",
+    "cinematic",
+    "music",
+    "epic",
+    "cinematic",
+    "art",
+    "art",
+    "nature",
+    "epic",
+    "music",
+    "nature",
+    "cinematic",
+    "epic",
+    "art",
+    "music",
+    "epic",
+    "music",
+    "music",
+    "epic",
+    "nature",
+    "youtube",
+    "youtube",
+    "youtube",
+    "art",
+    "art",
+    "art",
+    "music",
+    "music",
+    "art",
+    "music",
+    "art",
+
+    "music",
+    "music",
+    "music"
 ];
 
 const defaultThemeIcons = [
@@ -576,6 +695,7 @@ const defaultThemeIcons = [
     "vibrant glowing neon abstract lines or intense red fire embers",
     "a majestic silhouette of a soaring eagle or historic monument",
     "an antique pocket watch or a burning candle next to old books",
+    "an antique weathered parchment scroll with torn edges, aged paper texture, cracked patina, ornate antique gold frame and subtle gold leaf dust",
     "floating abstract glowing 3D alphabet letters and symbols",
     "an ancient weathered parchment scroll or wise old tree branches",
     "a classic vintage gramophone record or an old film projector",
@@ -605,7 +725,13 @@ const defaultThemeIcons = [
     "a glowing neon acoustic guitar and floating musical notes",
     "explosive glowing gold fire embers and intense stage lights",
     "a massive 3D musical staff and vibrant golden notes spiraling into a tunnel",
-    "lush blooming red roses and glowing golden dust particles over Anatolian tiles"
+    "lush blooming red roses and glowing golden dust particles over Anatolian tiles",
+    "an antique wooden radio with warm glowing vacuum tubes, old vinyl records and subtle Anatolian nostalgic objects",
+    "a lush Ottoman-inspired rose garden with deep red roses, emerald leaves, delicate tile motifs and warm golden sunlight",
+
+    "a vintage chrome microphone, warm golden stage bokeh and subtle amber haze",
+    "a classic 35mm Turkish cinema film reel, soft projector glow and delicate vintage roses",
+    "a vintage tabletop radio, a black vinyl record and warm golden reflections"
 ];
 
 const container = document.getElementById("promptsContainer");
@@ -951,6 +1077,23 @@ let brushPrompt = "";
         textPower = "Typography: Elegant 3D letters. Ensure clear hierarchy.";
     }
     
+    // Ferman/parşömen simgeleri seçildiyse yüzey dokusunu bulanıklaştırmadan koru.
+    // Bu koşul sadece bu yeni eskitilmiş doku tanımları kullanıldığında devreye girer.
+    const agedTextureTerms = [
+        "antique archival parchment sheet",
+        "weathered medieval parchment",
+        "old decree page surrounded by a dark distressed wooden border",
+        "two-tone antique paper surface",
+        "antique parchment panel with an ornate baroque engraved border",
+        "rough medieval parchment scroll with curled rolled ends",
+        "dark embossed antique scroll with deep crimson rolled ends",
+        "regal antique gold panel with embossed ornamental top and bottom decorations"
+    ];
+    const useAgedTextureTreatment = agedTextureTerms.some(term => userIcon.includes(term));
+    if (useAgedTextureTreatment) {
+        iconModifier = "AGED PAPER / FERMAN TEXTURE: Render [ICON] as a clearly visible and sharply detailed paper surface or decorative outer frame, not as a distant blurry symbol. Preserve rough paper fibers, ragged edges, deep creases, cracks, stains, mottled patina, tarnished gilding and worn corners wherever described. Keep the central subject and main typography readable; do not smooth away the aged and coarse texture.";
+    }
+
     let branding = "";
     if (channel) {
         if (watermarkStyle === "subtle") {
@@ -980,51 +1123,339 @@ let brushPrompt = "";
     }
 
     const pTemplates = [
-        `Transform the uploaded image into a Cinematic Anatolian composite cover.\n\n${focusCommand}\n\nBackground: deep Anatolian cultural textures, vivid warm amber tones, glowing gold highlights, saturated reds, and subtle warm dust particles. Create a dramatic, high-contrast atmosphere with rich cinematic depth.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Golden Warmth composite cover.\n\n${focusCommand}\n\nBackground: vibrant golden hour rays, intense warm aura, luxurious glowing gold particles, and rich sunset bokeh. Create a dramatic, high-contrast atmosphere with rich cinematic depth.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Dramatic Noir composite cover.\n\n${focusCommand}\n\nBackground: deep obsidian blacks, heavy moody shadows, striking misty street lamp light. Create a dramatic, high-contrast atmosphere.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Spring Rose composite cover.\n\n${focusCommand}\n\nBackground: vibrant ruby red roses, lush emerald green leaves, and glowing dreamy romantic sunlight.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Divine Light spiritual composite cover.\n\n${focusCommand}\n\nBackground: glowing ethereal god rays, intense bright whites, deep contrasting shadows.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Peaceful Rain composite cover.\n\n${focusCommand}\n\nBackground: deep moody blues, highly reflective wet glass surfaces, and vibrant glowing warm city bokeh.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Crimson Glow composite cover.\n\n${focusCommand}\n\nBackground: pure velvet black contrasted with blindingly piercing, luminous neon red lighting.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Patriotic (Vatan) composite cover.\n\n${focusCommand}\n\nBackground: vivid crimson reds, striking heroic sun highlights, majestic waving flag textures.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Classic Storyteller composite cover.\n\n${focusCommand}\n\nBackground: rich mahogany browns, vibrant warm amber light, deep shadows, and glowing cinematic dust over vintage books.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Mystery Letters composite cover.\n\n${focusCommand}\n\nBackground: deep mysterious blues, luminous floating 3D glowing letters.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Wisdom Study composite cover.\n\n${focusCommand}\n\nBackground: rich warm traditional tones, striking Rembrandt lighting on the subject.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Retro Yeşilçam composite cover.\n\n${focusCommand}\n\nBackground: vibrant warm nostalgic tones, intense film halation, rich cinematic grain.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Live Stage composite cover.\n\n${focusCommand}\n\nBackground: explosive glowing neon stage lights, deep concert blacks, dynamic lens flares.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into an Ancient Marble composite cover.\n\n${focusCommand}\n\nBackground: solid pristine white marble, gleaming gold accents, and epic godly sunlight shafts.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Deep Night composite cover.\n\n${focusCommand}\n\nBackground: deep urban blacks, intense glowing neon signs reflecting off wet pavement.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Cyber Neon composite cover.\n\n${focusCommand}\n\nBackground: high-contrast dark cyberpunk alleyways with aggressive electric blue and neon pink glowing lights.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into an Elite Luxury composite cover.\n\n${focusCommand}\n\nBackground: ultra-smooth dark marble contrasted with intensely glowing gold veins and sharp luxury lighting.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Ocean Wave composite cover.\n\n${focusCommand}\n\nBackground: vivid glowing bioluminescent blue waters, deep oceanic blacks, bright white crashing wave foam.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Phoenix Fire composite cover.\n\n${focusCommand}\n\nBackground: explosive pure reds and oranges, glowing flying embers against a deep charred black canvas.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Carnival composite cover.\n\n${focusCommand}\n\nBackground: intensely saturated rainbow neon lights flashing against a dark night sky.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into an Acoustic Nature composite cover.\n\n${focusCommand}\n\nBackground: lush vivid emerald greens, piercing golden hour sunlight breaking through a dark forest canopy.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Gothic Soul composite cover.\n\n${focusCommand}\n\nBackground: stark, cold stone textures with intensely glowing ethereal blue magical light, piercing through pitch black shadows.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Future Age composite cover.\n\n${focusCommand}\n\nBackground: pristine ultra-white futuristic surfaces glowing with sharp cyan holographic lines.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into an Art Canvas composite cover.\n\n${focusCommand}\n\nBackground: explosive, vibrant, heavily textured oil paint strokes with extreme color saturation.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Classic Symphony composite cover.\n\n${focusCommand}\n\nBackground: rich crimson velvet curtains, brilliant warm golden stage spotlights.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into an Epic Galaxy composite cover.\n\n${focusCommand}\n\nBackground: pure space black filled with intensely glowing neon purple and pink stardust and supernovas.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Podcast Studio composite cover.\n\n${focusCommand}\n\nBackground: warm moody studio acoustic panels, bright glowing neon rim lights.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into an Acoustic Lofi composite cover.\n\n${focusCommand}\n\nBackground: rich warm wood textures, incredibly soft and bright cinematic fairy light bokeh.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into an Epic Cosmic Infinity composite cover.\n\n${focusCommand}\n\nBackground: boundless deep space, intense glowing nebulas, brilliant sparkling stardust and surreal cosmic energy.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Red Sunset composite cover.\n\n${focusCommand}\n\nBackground: blazing warm sunset tones, saturated deep oranges and crimsons, majestic glowing horizon with dramatic shadows.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        
-        `Transform the uploaded image into an eye-catching YouTube thumbnail.\n\n${focusCommand}\n\nBackground: surreal, vibrant, high-contrast, designed to maximize CTR with glowing outlines. 3D composition.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}TYPOGRAPHY DOMINANCE: Massive, extreme 3D bold fonts, highly readable even at small sizes, popping off the screen with bright glowing borders.${branding}${sizeRule}`,
-        `Transform the uploaded image into an action-packed YouTube thumbnail.\n\n${focusCommand}\n\nBackground: explosive motion blur, flying embers, intense fiery oranges and reds, high energy, shocking visual impact.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}TYPOGRAPHY DOMINANCE: Giant, aggressive, slanted 3D action fonts in bright yellow or white, screaming for attention.${branding}${sizeRule}`,
-        `Transform the uploaded image into a mysterious/suspense YouTube thumbnail.\n\n${focusCommand}\n\nBackground: dark moody shadows, glowing neon highlights (red or green), eerie, suspenseful, creating intense curiosity.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}TYPOGRAPHY DOMINANCE: Huge, clean, striking 3D fonts with neon glows, positioned perfectly to draw the eye.${branding}${sizeRule}`,
+        `Transform the uploaded image into a Cinematic Anatolian composite cover.
 
-        // YENİ EKLENEN AHŞAP TEMALAR
-        `Transform the uploaded image into a Warm Wooden Acoustic Oil Paint composite cover.\n\n${focusCommand}\n\nBackground: rich, highly detailed natural warm wood textures seamlessly blended with expressive, thick oil paint brush strokes. Create an organic, artistic atmosphere with vibrant earthy tones and visible painterly textures.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Cinematic Wooden Oil Paint composite cover.\n\n${focusCommand}\n\nBackground: deep, polished dark wood grains layered with thick, dramatic oil paint impasto strokes. Use striking cinematic lighting with high contrast, glowing amber highlights, and rich, moody shadows over the textured wooden canvas.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Modern Neon Wood Paint composite cover.\n\n${focusCommand}\n\nBackground: a stylish contrast of rustic raw wood surfaces and thick, vibrant oil paint strokes, illuminated by soft glowing neon reflections. Create a cozy yet contemporary lofi aesthetic with beautiful bokeh and deep atmospheric shadows.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        
-        // YENİ EKLENEN MÜZİK TEMALARI (Sahneler)
-        `Transform the uploaded image into a fiery Stage & Sparkle music cover.\n\n${focusCommand}\n\nBackground: intense live concert atmosphere, blinding golden stage lights cutting through thick theatrical smoke, explosive glowing gold embers and fiery sparks flying dynamically around the subject. Deep cinematic blacks contrasting with brilliant warm luminescence.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into an Epic Note Tunnel music cover.\n\n${focusCommand}\n\nBackground: a massive, glowing 3D musical staff spiraling endlessly into a deep perspective tunnel. Brilliant golden and neon musical notes floating and rushing past the viewer with a dynamic motion blur effect. A surreal, majestic, and deeply immersive symphonic atmosphere.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
-        `Transform the uploaded image into a Nostalgic Rose & Gold music cover.\n\n${focusCommand}\n\nBackground: a rich, vintage aesthetic featuring intricate classic Anatolian tile borders, adorned with incredibly vibrant, dewy red roses. Layered with luxurious glowing gold leaf accents, warm cinematic dust particles, and deep elegant shadows for a timeless, romantic feel.\n\n[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`
+${focusCommand}
 
+Background: deep Anatolian cultural textures, vivid warm amber tones, glowing gold highlights, saturated reds, and subtle warm dust particles. Create a dramatic, high-contrast atmosphere with rich cinematic depth.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Golden Warmth composite cover.
+
+${focusCommand}
+
+Background: vibrant golden hour rays, intense warm aura, luxurious glowing gold particles, and rich sunset bokeh. Create a dramatic, high-contrast atmosphere with rich cinematic depth.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Dramatic Noir composite cover.
+
+${focusCommand}
+
+Background: deep obsidian blacks, heavy moody shadows, striking misty street lamp light. Create a dramatic, high-contrast atmosphere.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Spring Rose composite cover.
+
+${focusCommand}
+
+Background: vibrant ruby red roses, lush emerald green leaves, and glowing dreamy romantic sunlight.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Divine Light spiritual composite cover.
+
+${focusCommand}
+
+Background: glowing ethereal god rays, intense bright whites, deep contrasting shadows.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Peaceful Rain composite cover.
+
+${focusCommand}
+
+Background: deep moody blues, highly reflective wet glass surfaces, and vibrant glowing warm city bokeh.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Crimson Glow composite cover.
+
+${focusCommand}
+
+Background: pure velvet black contrasted with blindingly piercing, luminous neon red lighting.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Patriotic (Vatan) composite cover.
+
+${focusCommand}
+
+Background: vivid crimson reds, striking heroic sun highlights, majestic waving flag textures.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Classic Storyteller composite cover.
+
+${focusCommand}
+
+Background: rich mahogany browns, vibrant warm amber light, deep shadows, and glowing cinematic dust over vintage books.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Aged Parchment & Gold Leaf composite cover.
+
+${focusCommand}
+
+Background: richly aged parchment paper with naturally torn and worn edges, subtle cracks, faded archival texture, antique sepia staining and a refined ornate gold-leaf frame. Add delicate engraved ornamentation and restrained warm golden dust while keeping the center clean for the subject and typography.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Mystery Letters composite cover.
+
+${focusCommand}
+
+Background: deep mysterious blues, luminous floating 3D glowing letters.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Wisdom Study composite cover.
+
+${focusCommand}
+
+Background: rich warm traditional tones, striking Rembrandt lighting on the subject.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Retro Yeşilçam composite cover.
+
+${focusCommand}
+
+Background: vibrant warm nostalgic tones, intense film halation, rich cinematic grain.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Live Stage composite cover.
+
+${focusCommand}
+
+Background: explosive glowing neon stage lights, deep concert blacks, dynamic lens flares.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Ancient Marble composite cover.
+
+${focusCommand}
+
+Background: solid pristine white marble, gleaming gold accents, and epic godly sunlight shafts.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Deep Night composite cover.
+
+${focusCommand}
+
+Background: deep urban blacks, intense glowing neon signs reflecting off wet pavement.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Cyber Neon composite cover.
+
+${focusCommand}
+
+Background: high-contrast dark cyberpunk alleyways with aggressive electric blue and neon pink glowing lights.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Elite Luxury composite cover.
+
+${focusCommand}
+
+Background: ultra-smooth dark marble contrasted with intensely glowing gold veins and sharp luxury lighting.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Ocean Wave composite cover.
+
+${focusCommand}
+
+Background: vivid glowing bioluminescent blue waters, deep oceanic blacks, bright white crashing wave foam.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Phoenix Fire composite cover.
+
+${focusCommand}
+
+Background: explosive pure reds and oranges, glowing flying embers against a deep charred black canvas.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Carnival composite cover.
+
+${focusCommand}
+
+Background: intensely saturated rainbow neon lights flashing against a dark night sky.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Acoustic Nature composite cover.
+
+${focusCommand}
+
+Background: lush vivid emerald greens, piercing golden hour sunlight breaking through a dark forest canopy.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Gothic Soul composite cover.
+
+${focusCommand}
+
+Background: stark, cold stone textures with intensely glowing ethereal blue magical light, piercing through pitch black shadows.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Future Age composite cover.
+
+${focusCommand}
+
+Background: pristine ultra-white futuristic surfaces glowing with sharp cyan holographic lines.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Art Canvas composite cover.
+
+${focusCommand}
+
+Background: explosive, vibrant, heavily textured oil paint strokes with extreme color saturation.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Classic Symphony composite cover.
+
+${focusCommand}
+
+Background: rich crimson velvet curtains, brilliant warm golden stage spotlights.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Epic Galaxy composite cover.
+
+${focusCommand}
+
+Background: pure space black filled with intensely glowing neon purple and pink stardust and supernovas.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Podcast Studio composite cover.
+
+${focusCommand}
+
+Background: warm moody studio acoustic panels, bright glowing neon rim lights.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Acoustic Lofi composite cover.
+
+${focusCommand}
+
+Background: rich warm wood textures, incredibly soft and bright cinematic fairy light bokeh.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Epic Cosmic Infinity composite cover.
+
+${focusCommand}
+
+Background: boundless deep space, intense glowing nebulas, brilliant sparkling stardust and surreal cosmic energy.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Red Sunset composite cover.
+
+${focusCommand}
+
+Background: blazing warm sunset tones, saturated deep oranges and crimsons, majestic glowing horizon with dramatic shadows.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an eye-catching YouTube thumbnail.
+
+${focusCommand}
+
+Background: surreal, vibrant, high-contrast, designed to maximize CTR with glowing outlines. 3D composition.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}TYPOGRAPHY DOMINANCE: Massive, extreme 3D bold fonts, highly readable even at small sizes, popping off the screen with bright glowing borders.${branding}${sizeRule}`,
+        `Transform the uploaded image into an action-packed YouTube thumbnail.
+
+${focusCommand}
+
+Background: explosive motion blur, flying embers, intense fiery oranges and reds, high energy, shocking visual impact.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}TYPOGRAPHY DOMINANCE: Giant, aggressive, slanted 3D action fonts in bright yellow or white, screaming for attention.${branding}${sizeRule}`,
+        `Transform the uploaded image into a mysterious/suspense YouTube thumbnail.
+
+${focusCommand}
+
+Background: dark moody shadows, glowing neon highlights (red or green), eerie, suspenseful, creating intense curiosity.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}TYPOGRAPHY DOMINANCE: Huge, clean, striking 3D fonts with neon glows, positioned perfectly to draw the eye.${branding}${sizeRule}`,
+        `Transform the uploaded image into a Warm Wooden Acoustic Oil Paint composite cover.
+
+${focusCommand}
+
+Background: rich, highly detailed natural warm wood textures seamlessly blended with expressive, thick oil paint brush strokes. Create an organic, artistic atmosphere with vibrant earthy tones and visible painterly textures.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Cinematic Wooden Oil Paint composite cover.
+
+${focusCommand}
+
+Background: deep, polished dark wood grains layered with thick, dramatic oil paint impasto strokes. Use striking cinematic lighting with high contrast, glowing amber highlights, and rich, moody shadows over the textured wooden canvas.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Modern Neon Wood Paint composite cover.
+
+${focusCommand}
+
+Background: a stylish contrast of rustic raw wood surfaces and thick, vibrant oil paint strokes, illuminated by soft glowing neon reflections. Create a cozy yet contemporary lofi aesthetic with beautiful bokeh and deep atmospheric shadows.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a fiery Stage & Sparkle music cover.
+
+${focusCommand}
+
+Background: intense live concert atmosphere, blinding golden stage lights cutting through thick theatrical smoke, explosive glowing gold embers and fiery sparks flying dynamically around the subject. Deep cinematic blacks contrasting with brilliant warm luminescence.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Epic Note Tunnel music cover.
+
+${focusCommand}
+
+Background: a massive, glowing 3D musical staff spiraling endlessly into a deep perspective tunnel. Brilliant golden and neon musical notes floating and rushing past the viewer with a dynamic motion blur effect. A surreal, majestic, and deeply immersive symphonic atmosphere.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Nostalgic Rose & Gold music cover.
+
+${focusCommand}
+
+Background: a rich, vintage aesthetic featuring intricate classic Anatolian tile borders, adorned with incredibly vibrant, dewy red roses. Layered with luxurious glowing gold leaf accents, warm cinematic dust particles, and deep elegant shadows for a timeless, romantic feel.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Retro Radio & Anatolian Memory composite cover.
+
+${focusCommand}
+
+Background: a beautifully restored vintage Turkish radio on a warm wooden table, softly glowing vacuum tubes, subtle old vinyl records, amber lamp light, faint archival textures and cinematic dust. Keep the radio and all supporting objects in the far background with soft depth and bokeh so the subject remains dominant.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into an Ottoman Rose Garden & Golden Light composite cover.
+
+${focusCommand}
+
+Background: an elegant Ottoman-inspired rose garden with lush emerald leaves, deep ruby roses, subtle hand-painted tile motifs, delicate ornamental details and warm heavenly golden sunlight filtering through the foliage. Create a luxurious romantic atmosphere with rich depth while keeping decorative elements behind the subject.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`
+        ,`Transform the uploaded image into a Nostalgic Microphone & Emotional Expression music cover.
+
+IDENTITY ANCHOR: Use the uploaded reference photo as the identity source. Keep the same recognizable person, facial structure, age, skin tone, hairstyle, proportions, natural asymmetry and distinctive features. Do not replace the person with a different face.
+
+EXPRESSION TRANSFORMATION: Intentionally change only the performance expression: close the eyelids gently and naturally, relax the eyebrows, add tender emotional tension around the eyes and a subtle sincere singing expression around the mouth. The face should convey a deeply nostalgic, touching memory of a beloved song. Keep the face crisp, sharply focused and photorealistic, with natural skin texture.
+
+SCENE: An elegant singer performing close to a vintage chrome microphone. Warm golden stage backlight, soft round golden bokeh behind the face, amber stage haze and a classic concert-hall atmosphere. Keep the microphone slightly below or beside the mouth and never across the eyes. Background stays softly blurred.
+
+TYPOGRAPHY: At the top, display exactly the headline "${song || 'BU ŞARKIYI HATIRLADINIZ MI?'}" in bold, radiant, embossed metallic-gold lettering with excellent contrast. ${artist ? "Add the supplied artist name \"" + artist + "\" as a smaller elegant supporting line." : "Do not invent an artist name."} Keep every word inside the safe margins and away from the face. Do not add any other text.
+
+Compose intelligently for the selected aspect ratio. Preserve the person's identity while making the requested emotional expression clearly visible.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Yeşilçam Portrait & Longing Gaze music cover.
+
+IDENTITY ANCHOR: Retain the recognizable identity of the person in the reference image: same facial structure, age, skin tone, hair, proportions and distinctive features. Do not beautify into a different person or alter identifying details.
+
+EXPRESSION TRANSFORMATION: Create a sincere, longing expression as if remembering an old love song. The eyes look softly downward and slightly to the side, with a gentle moist catchlight; brows are relaxed with a subtle trace of sadness, and the lips hold a quiet, restrained emotion. Make the expression clearly different from the source while keeping the person unmistakably recognizable. Keep eyes, lashes and skin details sharply focused and natural.
+
+SCENE: Classic Turkish Yeşilçam cinema mood, intimate close-up near an old-fashioned stage microphone, warm tungsten key light, muted amber and burgundy tones, faint 35mm film grain, delicate film halation and a soft background hint of an old cinema or concert stage. Avoid heavy blur on the face and avoid obscuring facial features.
+
+TYPOGRAPHY: At the top, display exactly the headline "${song || 'BU ŞARKIYI HATIRLADINIZ MI?'}" in large embossed antique-gold lettering, clean and highly legible. ${artist ? "Place the supplied artist name \"" + artist + "\" beneath it in smaller matching type." : "Do not invent an artist name."} No extra words; keep text inside safe margins and away from the face.
+
+Adapt the framing to the selected aspect ratio; maintain the portrait as the clear focal point and preserve a nostalgic, realistic film-poster finish.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Retro Radio, Vinyl & Heartfelt Performance music cover.
+
+IDENTITY ANCHOR: Treat the uploaded person as the exact identity reference. Preserve recognizable facial geometry, skin tone, age, hairstyle, proportions and unique features. Do not swap identity or create a generic singer.
+
+EXPRESSION TRANSFORMATION: Give the singer a warm, heartfelt live-performance expression: eyelids softly closed or just lowered, a tiny sincere smile at the corners of the mouth, relaxed forehead and a tender emotional feeling as if reaching the chorus of a cherished old song. Expression may change; identity must remain recognizable. Show fine natural skin details and a sharply focused face.
+
+SCENE: An intimate retro music corner with a vintage radio and a softly visible black vinyl record in the distant background, classic chrome microphone, warm honey-amber lamps, golden dust motes and subtle sepia highlights. Keep the props secondary and softly out of focus; the singer's face remains dominant. Cinematic photorealism, rich depth and an authentic Turkish nostalgia mood.
+
+TYPOGRAPHY: At the top, display exactly the headline "${song || 'BU ŞARKIYI HATIRLADINIZ MI?'}" in bold radiant gold-foil embossed typography. ${artist ? "Add the supplied artist name \"" + artist + "\" as a smaller supporting line." : "Do not invent an artist name."} Use accurate spelling, no extra words, and keep all text clear of the face.
+
+Recompose naturally for the chosen aspect ratio with generous safe margins. Keep the emotional expression visible and the image polished, cinematic and realistic.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textPower}${branding}${sizeRule}`
     ];
 
     pTemplates.forEach((pt, i) => {
@@ -1128,6 +1559,28 @@ inputEvents.forEach(id => {
 });
 
 updatePrompts();
+
+
+// === ANA PROGRAMDAN TEK YÖNLÜ VERİ ALMA (BİRLEŞİK PROJE) ===
+// Ana programdaki sanatçı ve eser alanları buraya aktarılır; bu modül ana programa veri geri göndermez.
+function applyMainProject(data) {
+    if (!data) return;
+    const artistField = document.getElementById('artist');
+    const songField = document.getElementById('song');
+    if (artistField && data.artist !== undefined) artistField.value = data.artist || '';
+    if (songField && data.song !== undefined) songField.value = data.song || '';
+    updatePrompts();
+}
+window.addEventListener('message', function (event) {
+    const message = event.data || {};
+    if (message.target === '4mevsim-prompt' && message.type === 'PROJECT_STATE') {
+        applyMainProject(message.data);
+    }
+});
+// Sayfa açıldığında o anda ana programda bulunan değerleri iste.
+if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ source: '4mevsim-prompt', type: 'REQUEST_MAIN_STATE', module: 'prompt' }, '*');
+}
 
 // --- SCROLL TO TOP FONKSİYONU ---
 const scrollTopBtn = document.createElement("button");
