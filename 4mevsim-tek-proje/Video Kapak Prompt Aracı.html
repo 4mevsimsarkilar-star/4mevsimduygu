@@ -536,7 +536,7 @@ input[type=range]::-moz-range-thumb {
 </div>
 
 <script>
-const promptsData = Array.from({length: 42}, (_, i) => `p${i+1}`);
+const promptsData = Array.from({length: 45}, (_, i) => `p${i+1}`);
 
 const titles = [
     "🎬 Sinematik Anadolu",
@@ -580,7 +580,11 @@ const titles = [
     "🌌 Epik Nota Tüneli",
     "🥀 Nostaljik Gül & Varak",
     "📻 Retro Radyo & Anadolu Hatırası",
-    "🌺 Osmanlı Gül Bahçesi & Altın Işık"
+    "🌺 Osmanlı Gül Bahçesi & Altın Işık",
+
+    "🎤 Nostaljik Mikrofon & Duygusal İfade",
+    "🎞️ Yeşilçam Portresi & Hasret Bakışı",
+    "📻 Plak Işıltısı & İçten Performans"
 ];
 
 const trDescriptions = [
@@ -625,7 +629,11 @@ const trDescriptions = [
     "Dev 3D nota tüneli, altın notalar ve derin perspektifle büyüleyici müzikal sahne.",
     "Klasik çini bordür, kırmızı güller, altın varak ve zamansız romantik nostalji.",
     "Eski radyo, sıcak ahşap, analog ışıklar ve Anadolu hatıralarıyla nostaljik müzik atmosferi.",
-    "Zümrüt yapraklar, kadife kırmızı güller, Osmanlı esintili motifler ve yumuşak altın ışıklarla zarif romantizm."
+    "Zümrüt yapraklar, kadife kırmızı güller, Osmanlı esintili motifler ve yumuşak altın ışıklarla zarif romantizm.",
+
+    "Vintage mikrofon, gözleri nazikçe kapalı duygusal ifade, amber sahne sisi ve altın başlıkla nostaljik müzik kapağı.",
+    "Yeşilçam filmi sıcaklığı, hafif nemli hasret bakışı, yumuşak film ışığı ve altın tipografiyle duygusal portre.",
+    "Retro radyo ve plak atmosferi, içten şarkı söyleme mimiği, sıcak bokeh ve zarif altın yazıyla hatıra duygusu."
 ];
 
 const categoriesMap = [
@@ -670,7 +678,11 @@ const categoriesMap = [
     "music",
     "art",
     "music",
-    "art"
+    "art",
+
+    "music",
+    "music",
+    "music"
 ];
 
 const defaultThemeIcons = [
@@ -715,7 +727,11 @@ const defaultThemeIcons = [
     "a massive 3D musical staff and vibrant golden notes spiraling into a tunnel",
     "lush blooming red roses and glowing golden dust particles over Anatolian tiles",
     "an antique wooden radio with warm glowing vacuum tubes, old vinyl records and subtle Anatolian nostalgic objects",
-    "a lush Ottoman-inspired rose garden with deep red roses, emerald leaves, delicate tile motifs and warm golden sunlight"
+    "a lush Ottoman-inspired rose garden with deep red roses, emerald leaves, delicate tile motifs and warm golden sunlight",
+
+    "a vintage chrome microphone, warm golden stage bokeh and subtle amber haze",
+    "a classic 35mm Turkish cinema film reel, soft projector glow and delicate vintage roses",
+    "a vintage tabletop radio, a black vinyl record and warm golden reflections"
 ];
 
 const container = document.getElementById("promptsContainer");
@@ -1401,6 +1417,45 @@ ${focusCommand}
 Background: an elegant Ottoman-inspired rose garden with lush emerald leaves, deep ruby roses, subtle hand-painted tile motifs, delicate ornamental details and warm heavenly golden sunlight filtering through the foliage. Create a luxurious romantic atmosphere with rich depth while keeping decorative elements behind the subject.
 
 [ICON_MOD]${safeZonePrompt}${brushPrompt}${textSection}${textPower}${branding}${sizeRule}`
+        ,`Transform the uploaded image into a Nostalgic Microphone & Emotional Expression music cover.
+
+IDENTITY ANCHOR: Use the uploaded reference photo as the identity source. Keep the same recognizable person, facial structure, age, skin tone, hairstyle, proportions, natural asymmetry and distinctive features. Do not replace the person with a different face.
+
+EXPRESSION TRANSFORMATION: Intentionally change only the performance expression: close the eyelids gently and naturally, relax the eyebrows, add tender emotional tension around the eyes and a subtle sincere singing expression around the mouth. The face should convey a deeply nostalgic, touching memory of a beloved song. Keep the face crisp, sharply focused and photorealistic, with natural skin texture.
+
+SCENE: An elegant singer performing close to a vintage chrome microphone. Warm golden stage backlight, soft round golden bokeh behind the face, amber stage haze and a classic concert-hall atmosphere. Keep the microphone slightly below or beside the mouth and never across the eyes. Background stays softly blurred.
+
+TYPOGRAPHY: At the top, display exactly the headline "${song || 'BU ŞARKIYI HATIRLADINIZ MI?'}" in bold, radiant, embossed metallic-gold lettering with excellent contrast. ${artist ? "Add the supplied artist name \"" + artist + "\" as a smaller elegant supporting line." : "Do not invent an artist name."} Keep every word inside the safe margins and away from the face. Do not add any other text.
+
+Compose intelligently for the selected aspect ratio. Preserve the person's identity while making the requested emotional expression clearly visible.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Yeşilçam Portrait & Longing Gaze music cover.
+
+IDENTITY ANCHOR: Retain the recognizable identity of the person in the reference image: same facial structure, age, skin tone, hair, proportions and distinctive features. Do not beautify into a different person or alter identifying details.
+
+EXPRESSION TRANSFORMATION: Create a sincere, longing expression as if remembering an old love song. The eyes look softly downward and slightly to the side, with a gentle moist catchlight; brows are relaxed with a subtle trace of sadness, and the lips hold a quiet, restrained emotion. Make the expression clearly different from the source while keeping the person unmistakably recognizable. Keep eyes, lashes and skin details sharply focused and natural.
+
+SCENE: Classic Turkish Yeşilçam cinema mood, intimate close-up near an old-fashioned stage microphone, warm tungsten key light, muted amber and burgundy tones, faint 35mm film grain, delicate film halation and a soft background hint of an old cinema or concert stage. Avoid heavy blur on the face and avoid obscuring facial features.
+
+TYPOGRAPHY: At the top, display exactly the headline "${song || 'BU ŞARKIYI HATIRLADINIZ MI?'}" in large embossed antique-gold lettering, clean and highly legible. ${artist ? "Place the supplied artist name \"" + artist + "\" beneath it in smaller matching type." : "Do not invent an artist name."} No extra words; keep text inside safe margins and away from the face.
+
+Adapt the framing to the selected aspect ratio; maintain the portrait as the clear focal point and preserve a nostalgic, realistic film-poster finish.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textPower}${branding}${sizeRule}`,
+        `Transform the uploaded image into a Retro Radio, Vinyl & Heartfelt Performance music cover.
+
+IDENTITY ANCHOR: Treat the uploaded person as the exact identity reference. Preserve recognizable facial geometry, skin tone, age, hairstyle, proportions and unique features. Do not swap identity or create a generic singer.
+
+EXPRESSION TRANSFORMATION: Give the singer a warm, heartfelt live-performance expression: eyelids softly closed or just lowered, a tiny sincere smile at the corners of the mouth, relaxed forehead and a tender emotional feeling as if reaching the chorus of a cherished old song. Expression may change; identity must remain recognizable. Show fine natural skin details and a sharply focused face.
+
+SCENE: An intimate retro music corner with a vintage radio and a softly visible black vinyl record in the distant background, classic chrome microphone, warm honey-amber lamps, golden dust motes and subtle sepia highlights. Keep the props secondary and softly out of focus; the singer's face remains dominant. Cinematic photorealism, rich depth and an authentic Turkish nostalgia mood.
+
+TYPOGRAPHY: At the top, display exactly the headline "${song || 'BU ŞARKIYI HATIRLADINIZ MI?'}" in bold radiant gold-foil embossed typography. ${artist ? "Add the supplied artist name \"" + artist + "\" as a smaller supporting line." : "Do not invent an artist name."} Use accurate spelling, no extra words, and keep all text clear of the face.
+
+Recompose naturally for the chosen aspect ratio with generous safe margins. Keep the emotional expression visible and the image polished, cinematic and realistic.
+
+[ICON_MOD]${safeZonePrompt}${brushPrompt}${textPower}${branding}${sizeRule}`
     ];
 
     pTemplates.forEach((pt, i) => {
