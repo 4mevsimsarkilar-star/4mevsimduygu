@@ -773,8 +773,8 @@ promptsData.forEach((id, i) => {
         <span class="prompt-tr">${trDescriptions[i]}</span>
         <textarea id="${id}" readonly></textarea>
         <div class="box-btns">
-            <button class="edit-btn" onclick="toggleEdit('${id}', this)">🔒 Kilitli</button>
-            <button class="copy-btn" onclick="copyText('${id}', this)">📋 Kopyala</button>
+            <button type="button" class="edit-btn" onclick="toggleEdit('${id}', this)">🔒 Kilitli</button>
+            <button type="button" class="copy-btn" onclick="copyText('${id}', this)">📋 Promptu Kopyala</button>
         </div>
     `;
     container.appendChild(div);
@@ -1644,8 +1644,8 @@ Recompose naturally for the chosen aspect ratio with generous safe margins. Keep
             if (useMultipleReferences) {
                 result = "[REFERENCE FILE NOTE: Attach two or more reference images directly in the target AI conversation before submitting this prompt. You do not need to upload them into this prompt tool; this page does not transfer image files automatically.]\n\n" + basePrompt.replace(/\n\n/g, ' ').replace(/\n/g, ' ');
             } else if (currentImg) {
-                // V7.0 single-image behavior is retained.
-                result = currentImg + " " + basePrompt.replace(/\n\n/g, ' ').replace(/\n/g, ' ');
+                // Never insert a data:image URL into prompt text. The image is a separate reference attachment.
+                result = "[REFERENCE IMAGE NOTE: Attach the reference image separately in the target AI tool. This button copies PROMPT TEXT ONLY; image files are not embedded in the copied text.]\n\n" + basePrompt.replace(/\n\n/g, ' ').replace(/\n/g, ' ');
             } else {
                 let promptWithoutImageText = basePrompt.replace("Transform the uploaded image into a ", "Create an image featuring a subject in a ");
                 promptWithoutImageText = promptWithoutImageText.replace("Transform the uploaded image into an ", "Create an image featuring a subject in an ");
@@ -1667,7 +1667,7 @@ Recompose naturally for the chosen aspect ratio with generous safe margins. Keep
     });
 }
 
-function copyText(id, btn) {
+async function copyText(id, btn) {
     const count = getReferenceImageCount();
     const multiMode = document.getElementById('imageModeMulti').checked;
     // Tek görsel modunda yerel bir görsel beklenir; çoklu modda görseller AI sohbetine sonradan eklenebilir.
@@ -1676,11 +1676,54 @@ function copyText(id, btn) {
         document.getElementById('fileInput').focus();
         return;
     }
-    const text = document.getElementById(id).value;
-    navigator.clipboard.writeText(text);
+
+    const field = document.getElementById(id);
+    const text = field ? field.value.trim() : "";
+    if (!text) {
+        alert("Kopyalanacak prompt boş. Önce promptun oluşturulduğunu kontrol edin.");
+        return;
+    }
+
+    // Prompt düğmeleri yalnızca metin kopyalar; görseli panoya yazan işlev ayrı düğmededir.
+    let copied = false;
+    try {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+            await navigator.clipboard.writeText(text);
+            copied = true;
+        }
+    } catch (err) {
+        // Denenecek eski tarayıcı uyumlu yedek yol aşağıda.
+    }
+
+    if (!copied) {
+        let temp = null;
+        try {
+            temp = document.createElement("textarea");
+            temp.value = text;
+            temp.setAttribute("readonly", "");
+            temp.style.position = "fixed";
+            temp.style.left = "-9999px";
+            temp.style.top = "0";
+            document.body.appendChild(temp);
+            temp.focus();
+            temp.select();
+            copied = Boolean(document.execCommand("copy"));
+        } catch (err) {
+            copied = false;
+        } finally {
+            if (temp && temp.parentNode) temp.parentNode.removeChild(temp);
+        }
+    }
+
+    if (!copied) {
+        // Panoya erişim engellenirse başarı göstermeyip kullanıcıya metni elle kopyalama olanağı ver.
+        window.prompt("Tarayıcı otomatik kopyalamayı engelledi. Metni seçip Ctrl+C ile kopyalayın:", text);
+        return;
+    }
+
     const old = btn.innerText;
     const oldBg = btn.style.background;
-    btn.innerText = "✅ Kopyalandı!";
+    btn.innerText = "✅ Prompt Kopyalandı!";
     btn.style.background = "#22c55e";
     btn.style.color = "#fff";
     setTimeout(() => {
@@ -1689,7 +1732,6 @@ function copyText(id, btn) {
         btn.style.color = "#000";
     }, 2000);
 }
-
 function toggleEdit(id, btn) {
     const el = document.getElementById(id);
     if(el.hasAttribute('readonly')) {
