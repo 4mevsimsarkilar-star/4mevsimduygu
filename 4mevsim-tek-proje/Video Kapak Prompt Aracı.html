@@ -165,9 +165,13 @@ input[type=text]:focus, select:focus, .auto-expand:focus {
 .image-mode-options { display: flex; flex-wrap: wrap; gap: 10px 18px; }
 .image-mode-options label { display: inline-flex; align-items: center; gap: 7px; color: var(--text); cursor: pointer; font-size: 13px; }
 .image-mode-options input { accent-color: var(--accent); }
+.image-mode-reminder { margin: 10px 0 0; padding: 9px 11px; border-radius: 9px; border: 1px solid rgba(245,158,11,.45); background: rgba(245,158,11,.09); color: #fcd34d; font-size: 12px; line-height: 1.5; }
 #imageModeStatus { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 10px 0 0; }
 #imageModeStatus.warning { color: #fbbf24; }
 #imageModeStatus.ready { color: #5eead4; }
+#imageModeStatus.attention { display: block; padding: 11px 12px; border: 1px solid rgba(248,113,113,.75); border-radius: 10px; background: rgba(127,29,29,.20); color: #fee2e2; }
+.mode-switch-btn { display: inline-block; margin: 9px 0 0; padding: 8px 12px; border-radius: 8px; border: 1px solid #fbbf24; background: #fbbf24; color: #251400; font-size: 12px; font-weight: 800; cursor: pointer; }
+.mode-switch-btn:hover { filter: brightness(1.08); }
 .extra-preview-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 8px auto 12px; }
 .extra-preview-card { width: 124px; padding: 8px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.025); }
 .extra-preview-card img { display: block; width: 100%; height: 92px; object-fit: cover; border-radius: 8px; }
@@ -576,7 +580,8 @@ input[type=range]::-moz-range-thumb {
                     <label><input type="radio" name="imageMode" id="imageModeSingle" value="single" checked onchange="onImageModeChange()"> Tek görsel (V7.0 davranışı)</label>
                     <label><input type="radio" name="imageMode" id="imageModeMulti" value="multi" onchange="onImageModeChange()"> Çoklu görsel (hepsini birleştir)</label>
                 </div>
-                <p id="imageModeStatus">Tek görsel modunda programa bir görsel yükleyin. Görselleri doğrudan yapay zekâ sohbetine ekleyip burada yüklemek istemiyorsanız Çoklu görsel modunu seçin.</p>
+                <p class="image-mode-reminder">💡 <strong>Önemli:</strong> Bu seçim promptun nasıl çalışacağını belirler. Ek görsel eklemek modu otomatik değiştirmez. İki veya daha fazla görseli birlikte kullandırmak için <strong>“Çoklu görsel”</strong> seçili olmalı.</p>
+                <p id="imageModeStatus" role="status" aria-live="polite">Tek görsel modu seçili. Birden fazla görsel kullanacaksanız Çoklu görsel moduna geçin.</p>
             </div>
             <div class="action-btns">
                 <button class="btn-main" onclick="pasteImageButton()">📋 Butonla Yapıştır</button>
@@ -1042,6 +1047,14 @@ function onImageModeChange() {
     updatePrompts();
 }
 
+function switchToMultiMode() {
+    const multiOption = document.getElementById('imageModeMulti');
+    if (multiOption) {
+        multiOption.checked = true;
+        onImageModeChange();
+    }
+}
+
 function updateReferenceUI() {
     const count = getReferenceImageCount();
     const countEl = document.getElementById('referenceCount');
@@ -1071,24 +1084,24 @@ function updateReferenceUI() {
         grid.appendChild(card);
     });
     if (multiMode && count === 0) {
-        statusEl.textContent = "Çoklu görsel modu açık: Programa görsel yüklemek zorunda değilsiniz. Promptu kopyalayın ve ChatGPT/DALL·E veya kullanacağınız diğer yapay zekâ sohbetine en az 2 görseli birlikte ekleyin. Bu sayfa görselleri otomatik göndermez.";
+        statusEl.textContent = "✅ Çoklu görsel modu etkin. Prompt tüm referans görsellerini birlikte kullanmayı isteyecek. Görselleri bu araca yüklemek zorunda değilsiniz; en az iki görseli ChatGPT/DALL·E sohbetine birlikte eklemeyi unutmayın. Bu sayfa görselleri otomatik göndermez.";
         statusEl.className = 'ready';
     } else if (multiMode && count === 1) {
-        statusEl.textContent = "Çoklu görsel modu açık: Prompt, eklenecek tüm görselleri tek bir referans kümesi olarak birleştirecek. Programda şu an 1 görsel var; diğer görselleri buradan Ekstra Görsel Ekle ile ekleyebilir veya yapay zekâ sohbetine birlikte yükleyebilirsiniz.";
+        statusEl.textContent = "✅ Çoklu görsel modu etkin. Araçta şu an 1 görsel var; diğer görselleri “Ekstra Görsel Ekle” ile ekleyebilir veya hepsini doğrudan hedef yapay zekâ sohbetine yükleyebilirsiniz. Prompt çoklu referans talimatıyla hazırlanıyor.";
         statusEl.className = 'ready';
     } else if (multiMode) {
-        statusEl.textContent = `Çoklu mod açık: ${count} görsel tek bir referans kümesi olarak harmanlanacak. İlk yüklenen görsel otomatik olarak ana görsel sayılmayacak; kolaj veya bölünmüş ekran istenmeyecek.`;
+        statusEl.textContent = `✅ Çoklu görsel modu etkin: araçta ${count} görsel var. Prompt, tüm referanslardan belirgin ayrıntılar kullanıp bunları tek bir kapakta birleştirmeyi isteyecek. Görselleri hedef AI sohbetine ayrıca eklemeniz gerekir.`;
         statusEl.className = 'ready';
+    } else if (count > 1) {
+        statusEl.className = 'attention warning';
+        statusEl.innerHTML = `⚠️ <strong>${count} görsel yüklü ama “Tek görsel” modu seçili.</strong> Bu durumda prompt çoklu görselleri birleştirme talimatı almayacak; ek görsellerin kullanımı garanti edilmez.<br>Hepsini birlikte kullanmak istiyorsanız aşağıdaki düğmeye basın.<br><button type="button" class="mode-switch-btn">🔀 Çoklu görsel moduna geç</button>`;
+        const switchButton = statusEl.querySelector('.mode-switch-btn');
+        if (switchButton) switchButton.addEventListener('click', switchToMultiMode);
     } else if (count === 0) {
-        statusEl.textContent = "Tek görsel promptu da görsel yüklemeden oluşturulup kopyalanabilir. Referans görselini hedef yapay zekâ sohbetine ayrıca ekleyebilirsiniz.";
+        statusEl.textContent = "Tek görsel modu seçili. Promptu görsel yüklemeden de kopyalayabilirsiniz. Tek bir referans kullanacaksanız görseli hedef yapay zekâ sohbetine ekleyin; birden fazla görseli birleştirmek için Çoklu görseli seçin.";
         statusEl.className = 'warning';
-    } else if (extraImages.length > 0) {
-        statusEl.textContent = currentImg
-            ? `Tek görsel modu açık: yalnızca ana görsel kullanılacak. Yüklediğiniz ${extraImages.length} ek görsel, hepsini birleştirmek için Çoklu görsel moduna geçene kadar prompta dahil edilmez.`
-            : `Ana görsel yüklenmedi; ${extraImages.length} ek görsel var. Bunları birlikte kullanmak için Çoklu görsel moduna geçin. Promptu kopyalamak için görsel yüklemeniz şart değil.`;
-        statusEl.className = '';
     } else {
-        statusEl.textContent = "Tek görsel modu açık: V7.0'daki referans görsel davranışı korunur.";
+        statusEl.textContent = "✅ Tek görsel modu etkin: prompt tek bir referans görsel davranışıyla hazırlanıyor. Birden fazla görseli birlikte kullanmak için “Çoklu görsel” seçeneğine geçin.";
         statusEl.className = 'ready';
     }
 }
@@ -1411,7 +1424,7 @@ let brushPrompt = "";
     if (song) textLines.push(song);
     
     if (textLines.length > 0) {
-        textSection = `\n\nText:\n\n${textLines.join("\\n")}\n\n`;
+        textSection = `\n\nText:\n\n${textLines.join("\n")}\n\n`;
     } else {
         textSection = `\n\n`;
     }
@@ -1782,7 +1795,9 @@ Recompose naturally for the chosen aspect ratio with generous safe margins. Keep
                 .replace(/Retain the recognizable identity of the person in the reference image:/g, "If the same person appears across the attached reference images, retain their recognizable identity:")
                 .replace(/the uploaded image/g, "the attached reference images")
                 .replace(/the reference image/g, "the attached reference images");
-            basePrompt = `[MULTI-REFERENCE MODE: Use ALL reference images attached alongside this prompt as one unified visual reference collection. This mode is intended for two or more images, including images uploaded directly into the AI chat rather than into this prompt tool. Blend compatible subjects, colors, atmosphere, textures, and useful visual details into ONE coherent cover. Do not create a collage, grid, split-screen, or separate outputs. Do not number the images or assign roles based on upload order; no image is automatically the main image. If the references show different people, do not merge their identities into a new face; integrate relevant subjects naturally. Ensure the final framing, text and layout match the selected aspect ratio.]\n\n` + basePrompt;
+            basePrompt = `[STRICT MULTI-REFERENCE MODE — EVERY ATTACHED IMAGE IS REQUIRED SOURCE MATERIAL]: Inspect every attached reference image separately before designing. Do NOT ignore, discard, replace, or use only one of the images. This is not a mood-board-only request: every reference must make a clearly identifiable visual contribution to the final cover. Determine each image's role from its actual content, never from upload order. If one image shows a wide scene, room, stage, group arrangement, camera framing, or distinctive setting, preserve recognizable parts of that scene and keep it visibly present in the final composition. If another image is a close-up portrait of a person from that scene, use the close-up to improve that person's recognizable face, expression, and clothing details, BUT do not let the close-up crop erase or replace the wider scene. Carry over at least one distinctive subject, object, setting detail, or compositional feature from EACH reference. Integrate them into ONE coherent cover, not a collage, grid, split-screen, or separate outputs. Do not assign roles by upload order and do not automatically make the first image the main image; infer roles from visual evidence. If different people appear, preserve their distinct identities and do not fuse them into a new face. Theme effects and decorative background elements must not replace the source images' important content. Ensure the final framing, text and layout match the selected aspect ratio.]\n\n` + basePrompt;
+            // Son talimatlar tekrar vurgulanır: yakın plan, diğer referansların atlanmasına izin vermez.
+            basePrompt += `\n\n[FINAL REFERENCE CHECK — REQUIRED]: Before finalizing, verify that the composition visibly includes meaningful content from EVERY attached reference image. If the set contains both a wide scene and a close-up portrait, retain the wide scene's recognizable environment/arrangement while using the portrait for facial detail. Do not output a standalone close-up when a scene reference is also attached. Preserve the requested artist and song text exactly; never substitute existing text/logos found in a reference for the requested wording. No attached reference may be omitted.`;
         }
 
         if (targetTool === "midjourney") {
