@@ -265,13 +265,35 @@ input[type=range]::-moz-range-thumb {
 }
 
 #fullscreenOverlay {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.92); z-index: 9999; justify-content: center; align-items: center;
-    cursor: zoom-out; backdrop-filter: blur(8px);
+    display: none; position: fixed; inset: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.94); z-index: 9999; justify-content: center; align-items: center;
+    cursor: zoom-out; backdrop-filter: blur(8px); padding: 16px; box-sizing: border-box;
+}
+.fullscreen-dialog {
+    width: min(1100px, 100%); max-height: 100%; display: flex; flex-direction: column;
+    align-items: center; gap: 12px; cursor: default; overflow: auto;
+    background: rgba(18, 23, 32, 0.98); border: 1px solid var(--line);
+    border-radius: 18px; padding: 14px; box-sizing: border-box;
 }
 #fullscreenImg {
-    max-width: 95%; max-height: 95%; border-radius: 16px;
-    box-shadow: 0 0 50px rgba(20,184,166,0.3); object-fit: contain;
+    max-width: 100%; max-height: min(62vh, 760px); border-radius: 12px;
+    box-shadow: 0 0 36px rgba(20,184,166,0.22); object-fit: contain;
+}
+.fullscreen-topbar { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.fullscreen-topbar strong { color: var(--gold); font-size: 13px; }
+.fullscreen-toolbar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; }
+.fullscreen-toolbar button, .fullscreen-close {
+    border: 1px solid var(--line); border-radius: 9px; padding: 9px 12px; cursor: pointer;
+    color: var(--text); background: var(--btn); font-size: 12px; font-weight: 700;
+}
+.fullscreen-toolbar button:hover, .fullscreen-close:hover { border-color: var(--accent); background: var(--btnh); }
+.fullscreen-help { color: var(--muted); font-size: 11px; line-height: 1.5; text-align: center; margin: 0; }
+.extra-preview-card img { cursor: zoom-in; }
+@media (max-width: 600px) {
+    #fullscreenOverlay { padding: 6px; }
+    .fullscreen-dialog { padding: 9px; border-radius: 12px; }
+    #fullscreenImg { max-height: 48vh; }
+    .fullscreen-toolbar button { flex: 1 1 42%; padding: 9px 6px; }
 }
 #scrollTopBtn {
     display: none; position: fixed; bottom: 30px; right: 30px; z-index: 99;
@@ -288,8 +310,23 @@ input[type=range]::-moz-range-thumb {
 </head>
 <body>
 
-<div id="fullscreenOverlay" onclick="closeFullscreen()">
-    <img id="fullscreenImg" src="">
+<div id="fullscreenOverlay" onclick="handleFullscreenBackdrop(event)" aria-label="Görsel önizleme ve işlemler">
+    <div class="fullscreen-dialog" role="dialog" aria-modal="true" aria-label="Görsel işlemleri" onclick="event.stopPropagation()">
+        <div class="fullscreen-topbar">
+            <strong id="fullscreenTitle">Referans görseli</strong>
+            <button type="button" class="fullscreen-close" onclick="closeFullscreen()">✕ Kapat</button>
+        </div>
+        <img id="fullscreenImg" src="" alt="Büyütülmüş referans görseli">
+        <div class="fullscreen-toolbar">
+            <button type="button" onclick="pasteImageButton('primary')">📋 Panodan Ana Görsel</button>
+            <button type="button" onclick="pasteImageButton('extra')">➕ Panodan Ek Görsel</button>
+            <button type="button" onclick="document.getElementById('extraFileInput').click()">🗂️ Ek Görsel Yükle</button>
+            <button type="button" onclick="copyActiveImage()">📥 Bu Görseli Kopyala</button>
+            <button type="button" onclick="downloadActiveImage()">💾 Bu Görseli İndir</button>
+            <button type="button" onclick="removeActiveImage()">🗑️ Bu Görseli Kaldır</button>
+        </div>
+        <p class="fullscreen-help" id="fullscreenHelp">Görsel işlemleri buradan yapılabilir. Yapıştırma izni verilmezse ilgili yapıştırma düğmesine bastıktan sonra Ctrl+V kullanın.</p>
+    </div>
 </div>
 
 <div class="container">
@@ -530,7 +567,7 @@ input[type=range]::-moz-range-thumb {
                 <button class="btn-sub" onclick="document.getElementById('fileInput').click()">📂 Görsel Yükle</button>
                 <button class="btn-sub" id="extraImageBtn" onclick="openExtraImagePicker()">➕ Ekstra Görsel Ekle</button>
             </div>
-            <img id="previewImg" src="" onclick="openFullscreen()" title="Tam ekran görmek için tıkla" alt="Yüklenen referans görseli">
+            <img id="previewImg" src="" onclick="openFullscreen('primary')" title="Büyütmek ve görsel işlemlerini açmak için tıkla" alt="Yüklenen ana referans görseli">
             <div id="extraPreviewGrid" class="extra-preview-grid" aria-live="polite"></div>
             <div id="referenceCount" class="reference-count">Henüz görsel yüklenmedi</div>
             <div class="image-mode-box">
@@ -773,8 +810,8 @@ promptsData.forEach((id, i) => {
         <span class="prompt-tr">${trDescriptions[i]}</span>
         <textarea id="${id}" readonly></textarea>
         <div class="box-btns">
-            <button class="edit-btn" onclick="toggleEdit('${id}', this)">🔒 Kilitli</button>
-            <button class="copy-btn" onclick="copyText('${id}', this)">📋 Kopyala</button>
+            <button type="button" class="edit-btn" onclick="toggleEdit('${id}', this)">🔒 Kilitli</button>
+            <button type="button" class="copy-btn" onclick="copyText('${id}', this)">📋 Promptu Kopyala</button>
         </div>
     `;
     container.appendChild(div);
@@ -783,16 +820,6 @@ promptsData.forEach((id, i) => {
 function autoGrow(element) {
     element.style.height = "48px";
     element.style.height = (element.scrollHeight) + "px";
-}
-
-function openFullscreen() {
-    if(!currentImg) return;
-    document.getElementById("fullscreenImg").src = currentImg;
-    document.getElementById("fullscreenOverlay").style.display = "flex";
-}
-
-function closeFullscreen() {
-    document.getElementById("fullscreenOverlay").style.display = "none";
 }
 
 document.getElementById("useBrush").addEventListener("change", function() {
@@ -968,11 +995,7 @@ function previewImage(event) {
 }
 
 function openExtraImagePicker() {
-    if (!currentImg) {
-        alert("Önce en az bir görsel yükleyin. Ardından ➕ Ekstra Görsel Ekle ile diğer görselleri seçebilirsiniz.");
-        document.getElementById('fileInput').click();
-        return;
-    }
+    // Ek görseller, ana görsel yüklenmemiş olsa da eklenebilir.
     document.getElementById('extraFileInput').click();
 }
 
@@ -1033,6 +1056,8 @@ function updateReferenceUI() {
         const img = document.createElement('img');
         img.src = image.src;
         img.alt = 'Ek referans görseli';
+        img.title = 'Büyütmek ve işlemleri açmak için tıklayın';
+        img.addEventListener('click', () => openFullscreen('extra', image.id));
         const name = document.createElement('span');
         name.className = 'extra-name';
         name.textContent = image.name;
@@ -1055,10 +1080,12 @@ function updateReferenceUI() {
         statusEl.textContent = `Çoklu mod açık: ${count} görsel tek bir referans kümesi olarak harmanlanacak. İlk yüklenen görsel otomatik olarak ana görsel sayılmayacak; kolaj veya bölünmüş ekran istenmeyecek.`;
         statusEl.className = 'ready';
     } else if (count === 0) {
-        statusEl.textContent = "Tek görsel modu için programa bir görsel yükleyin. Görselleri doğrudan yapay zekâ sohbetine ekleyip programda yüklemek istemiyorsanız Çoklu görsel modunu seçebilirsiniz.";
+        statusEl.textContent = "Tek görsel promptu da görsel yüklemeden oluşturulup kopyalanabilir. Referans görselini hedef yapay zekâ sohbetine ayrıca ekleyebilirsiniz.";
         statusEl.className = 'warning';
     } else if (extraImages.length > 0) {
-        statusEl.textContent = `Tek görsel modu açık: yalnızca ilk görsel kullanılacak. Yüklediğiniz ${extraImages.length} ekstra görsel, çoklu moda geçene kadar prompta dahil edilmez.`;
+        statusEl.textContent = currentImg
+            ? `Tek görsel modu açık: yalnızca ana görsel kullanılacak. Yüklediğiniz ${extraImages.length} ek görsel, hepsini birleştirmek için Çoklu görsel moduna geçene kadar prompta dahil edilmez.`
+            : `Ana görsel yüklenmedi; ${extraImages.length} ek görsel var. Bunları birlikte kullanmak için Çoklu görsel moduna geçin. Promptu kopyalamak için görsel yüklemeniz şart değil.`;
         statusEl.className = '';
     } else {
         statusEl.textContent = "Tek görsel modu açık: V7.0'daki referans görsel davranışı korunur.";
@@ -1066,53 +1093,170 @@ function updateReferenceUI() {
     }
 }
 
-async function pasteImageButton() {
+let activeModalImageType = 'primary';
+let activeModalExtraId = null;
+let pendingPasteDestination = 'primary';
+
+function getActiveModalImage() {
+    if (activeModalImageType === 'extra') {
+        const item = extraImages.find(image => image.id === activeModalExtraId);
+        if (item) return { src: item.src, name: item.name || 'Ek referans görseli', type: 'extra', id: item.id };
+    }
+    if (currentImg) return { src: currentImg, name: currentImageName || 'Ana referans görseli', type: 'primary', id: null };
+    return null;
+}
+
+function openFullscreen(type = 'primary', extraId = null) {
+    let selected = null;
+    if (type === 'extra') {
+        selected = extraImages.find(image => image.id === extraId) || null;
+        if (!selected) return;
+        activeModalImageType = 'extra';
+        activeModalExtraId = selected.id;
+    } else {
+        if (!currentImg) return;
+        selected = { src: currentImg, name: currentImageName || 'Ana referans görseli' };
+        activeModalImageType = 'primary';
+        activeModalExtraId = null;
+    }
+    document.getElementById('fullscreenImg').src = selected.src;
+    document.getElementById('fullscreenTitle').textContent = selected.name || 'Referans görseli';
+    document.getElementById('fullscreenOverlay').style.display = 'flex';
+    document.getElementById('fullscreenHelp').textContent = 'Ana görseli değiştirebilir, panodan ek görsel yapıştırabilir veya bu görseli kopyalayıp indirebilirsiniz.';
+    pendingPasteDestination = type === 'extra' ? 'extra' : 'primary';
+}
+
+function closeFullscreen() {
+    document.getElementById('fullscreenOverlay').style.display = 'none';
+    pendingPasteDestination = 'primary';
+}
+
+function handleFullscreenBackdrop(event) {
+    if (event.target === document.getElementById('fullscreenOverlay')) closeFullscreen();
+}
+
+function applyPastedImage(dataUrl, target = 'primary', name = 'Panodan yapıştırılan görsel') {
+    if (target === 'extra') {
+        const item = { id: `extra-${++extraImageCounter}`, name, src: dataUrl };
+        extraImages.push(item);
+        updateReferenceUI();
+        updatePrompts();
+        pendingPasteDestination = 'primary';
+        if (document.getElementById('fullscreenOverlay').style.display === 'flex') {
+            openFullscreen('extra', item.id);
+        }
+    } else {
+        setPrimaryImage(dataUrl, name);
+        pendingPasteDestination = 'primary';
+        if (document.getElementById('fullscreenOverlay').style.display === 'flex') openFullscreen('primary');
+    }
+}
+
+async function pasteImageButton(target = 'primary') {
+    pendingPasteDestination = target === 'extra' ? 'extra' : 'primary';
     try {
+        if (!navigator.clipboard || typeof navigator.clipboard.read !== 'function') {
+            throw new Error('Bu tarayıcı panodan görsel okuma izni vermiyor.');
+        }
         const clipboardItems = await navigator.clipboard.read();
         for (const clipboardItem of clipboardItems) {
-            const imageTypes = clipboardItem.types.filter(type => type.startsWith('image/'));
-            for (const imageType of imageTypes) {
-                const blob = await clipboardItem.getType(imageType);
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    setPrimaryImage(e.target.result, "Panodan yapıştırılan görsel");
-                };
-                reader.readAsDataURL(blob);
-                return;
-            }
+            const imageType = clipboardItem.types.find(type => type.startsWith('image/'));
+            if (!imageType) continue;
+            const blob = await clipboardItem.getType(imageType);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                applyPastedImage(e.target.result, target, target === 'extra' ? 'Panodan yapıştırılan ek görsel' : 'Panodan yapıştırılan ana görsel');
+            };
+            reader.onerror = function() { alert('Panodaki görsel okunamadı. Lütfen yeniden deneyin.'); };
+            reader.readAsDataURL(blob);
+            return;
         }
-        alert("Panoda resim bulunamadı. Lütfen önce bir resmi kopyalayın.");
+        alert('Panoda görsel bulunamadı. Önce bir görseli kopyalayın.');
     } catch (err) {
-        alert("Panodan okuma izni reddedildi veya hata oluştu: " + err);
+        const help = document.getElementById('fullscreenHelp');
+        if (help && document.getElementById('fullscreenOverlay').style.display === 'flex') {
+            help.textContent = target === 'extra'
+                ? 'Ek görsel eklemek için bu düğmeye bastıktan sonra Ctrl+V kullanın. Alternatif olarak “Ek Görsel Yükle” düğmesini kullanabilirsiniz.'
+                : 'Ana görseli yapıştırmak için bu düğmeye bastıktan sonra Ctrl+V kullanın. Alternatif olarak üstteki “Görsel Yükle” düğmesini kullanabilirsiniz.';
+        }
+        alert('Panodan doğrudan okuma engellendi. Görseli yapıştırmak için bu düğmeye bastıktan sonra Ctrl+V kullanın veya “Ek Görsel Yükle” seçeneğini kullanın.');
     }
 }
 
 window.addEventListener('paste', e => {
-    if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
-        const file = e.clipboardData.files[0];
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = ev => setPrimaryImage(ev.target.result, "Panodan yapıştırılan görsel");
-            reader.readAsDataURL(file);
+    if (!e.clipboardData) return;
+    let file = null;
+    if (e.clipboardData.items) {
+        for (const item of e.clipboardData.items) {
+            if (item.type && item.type.startsWith('image/')) { file = item.getAsFile(); if (file) break; }
         }
     }
+    if (!file && e.clipboardData.files && e.clipboardData.files.length) {
+        file = Array.from(e.clipboardData.files).find(candidate => candidate.type && candidate.type.startsWith('image/')) || null;
+    }
+    if (!file) return;
+    const overlayOpen = document.getElementById('fullscreenOverlay').style.display === 'flex';
+    const target = overlayOpen ? pendingPasteDestination : 'primary';
+    const reader = new FileReader();
+    reader.onload = ev => applyPastedImage(ev.target.result, target, target === 'extra' ? 'Panodan yapıştırılan ek görsel' : 'Panodan yapıştırılan ana görsel');
+    reader.readAsDataURL(file);
+    e.preventDefault();
 });
 
-async function copyOriginalImage() {
-    if (!currentImg) {
-        alert("Kopyalanacak resim yok!");
-        return;
-    }
+async function copyImageData(dataUrl, fallbackName = 'görsel') {
+    if (!dataUrl) { alert('Kopyalanacak görsel bulunamadı.'); return; }
     try {
-        const response = await fetch(currentImg);
+        const response = await fetch(dataUrl);
         const blob = await response.blob();
-        await navigator.clipboard.write([
-            new ClipboardItem({ [blob.type]: blob })
-        ]);
-        alert("Orijinal resim tam boyutlarında başarıyla panoya kopyalandı!");
+        if (!navigator.clipboard || typeof navigator.clipboard.write !== 'function' || typeof ClipboardItem === 'undefined') {
+            throw new Error('Tarayıcı görseli panoya yazmayı desteklemiyor.');
+        }
+        await navigator.clipboard.write([new ClipboardItem({ [blob.type || 'image/png']: blob })]);
+        alert(`${fallbackName} panoya kopyalandı.`);
     } catch (err) {
-        alert("Kopyalama başarısız oldu: " + err);
+        alert('Görsel panoya kopyalanamadı. Tarayıcı izinlerini kontrol edin veya görseli indirip kullanın.');
     }
+}
+
+async function copyOriginalImage() {
+    if (!currentImg) { alert('Kopyalanacak ana görsel yok.'); return; }
+    await copyImageData(currentImg, 'Ana görsel');
+}
+
+async function copyActiveImage() {
+    const image = getActiveModalImage();
+    if (!image) { alert('Kopyalanacak görsel bulunamadı.'); return; }
+    await copyImageData(image.src, image.name || 'Görsel');
+}
+
+function downloadActiveImage() {
+    const image = getActiveModalImage();
+    if (!image) { alert('İndirilecek görsel bulunamadı.'); return; }
+    const a = document.createElement('a');
+    a.href = image.src;
+    const safeName = (image.name || (image.type === 'extra' ? 'NRA_Ek_Referans' : 'NRA_Referans')).replace(/[^a-z0-9._-]+/gi, '_');
+    a.download = /\.[a-z0-9]{2,5}$/i.test(safeName) ? safeName : `${safeName}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+}
+
+function removeActiveImage() {
+    const image = getActiveModalImage();
+    if (!image) { closeFullscreen(); return; }
+    if (image.type === 'extra') {
+        extraImages = extraImages.filter(item => item.id !== image.id);
+    } else {
+        currentImg = '';
+        currentImageName = '';
+        document.getElementById('previewImg').src = '';
+        document.getElementById('previewImg').style.display = 'none';
+        document.getElementById('fileInput').value = '';
+        document.getElementById('copyOriginalBtn').style.display = 'none';
+    }
+    updateReferenceUI();
+    updatePrompts();
+    if (extraImages.length) openFullscreen('extra', extraImages[0].id);
+    else if (currentImg) openFullscreen('primary');
+    else closeFullscreen();
 }
 
 function clearImage() {
@@ -1180,21 +1324,16 @@ function updatePrompts() {
 
 let brushPrompt = "";
     if (useBrush) {
-        const defaultBrush = "elegant and subtle oil paint brush strokes";
+        const defaultBrush = "thick expressive impasto oil paint brush strokes with rich texture";
         const selectedBrush = brushStyle || defaultBrush;
-        
-        let textCommand = "";
-        let brushTextLines = [];
-        if (line1) brushTextLines.push(line1);
-        if (line2) brushTextLines.push(line2);
-        
-        if (brushTextLines.length > 0) {
-            let combinedText = brushTextLines.join(" ");
-            textCommand = ` The typography "${combinedText}" must be placed directly ON TOP OF this specific brush stroke block.`;
-        }
-        
-        // Fırçayı baskınlıktan çıkarıp yazının arkasına bir zemin olarak yerleştiriyoruz
-        brushPrompt = `\n\n[BRUSH STROKE LAYER]: Add a clean, cohesive cluster of ${selectedBrush} specifically positioned as a background canvas for the text. It MUST be properly scaled, subtle, and kept behind the text to avoid visual clutter and random placement.${textCommand}`;
+        const explicitTextCommands = [];
+        if (line1) explicitTextCommands.push(`LINE 1 — render this exact text, preserving every character and spelling: "${line1}"`);
+        if (line2) explicitTextCommands.push(`LINE 2 — render this exact text, preserving every character and spelling: "${line2}"`);
+        const textCommand = explicitTextCommands.length
+            ? `\n[EXACT CUSTOM TYPOGRAPHY]: ${explicitTextCommands.join('. ')}. Place these lines directly over the selected brush-stroke panel. Do not omit, paraphrase, translate, or invent letters.`
+            : "";
+        // Seçilen fırça dokusunu ve özel satırları prompt içinde açık, zorunlu talimat olarak yaz.
+        brushPrompt = `\n\n[SMART ART LAYER — ACTIVE]: The selected background brush style is: ${selectedBrush}. Create a clearly visible but tidy brush-stroke panel behind the title text; keep it intentional, well-scaled and separate from the face. Do not replace this selected style with a generic effect.${textCommand}`;
     }
     // ==========================================
     // YENİ EKLENEN YOL AYRIMI (TARGET TOOL LOGIC)
@@ -1615,11 +1754,17 @@ Recompose naturally for the chosen aspect ratio with generous safe margins. Keep
 
     pTemplates.forEach((pt, i) => {
         let finalIconModifier = "";
-        
-        // Kutudaki ikon (virgülleri silinmiş salt dizi) 
         const items = userIcon.split(",").map(item => item.trim()).filter(item => item !== "");
-        
-        if (items.length > 0) {
+        const chosenIcons = items.length > 0 ? items : [defaultThemeIcons[i]];
+        const frameItems = chosenIcons.filter(item => /frame|border|\bpanel\b|\bscroll\b|parchment panel|çerçeve|kenarlık/i.test(item));
+        const otherItems = chosenIcons.filter(item => !frameItems.includes(item));
+
+        if (frameItems.length > 0) {
+            finalIconModifier = `DECORATIVE FRAME / BORDER — MUST BE CLEARLY VISIBLE: Use ${frameItems.join(" and ")} as an intentional decorative frame around the outside perimeter of the cover. Keep the frame crisp, detailed and visibly attached to the edges, with the corners and border treatment readable. Do NOT blur it into distant bokeh, hide it behind the subject, or omit it. Keep the face and all important lettering unobstructed.`;
+            if (otherItems.length > 0) {
+                finalIconModifier += ` ADDITIONAL SELECTED SYMBOLS: Place ${otherItems.join(" and ")} as supporting visual elements in the background, without replacing or obscuring the frame.`;
+            }
+        } else if (items.length > 0) {
             finalIconModifier = iconModifier.replace("[ICON]", items.join(" and "));
         } else {
             finalIconModifier = iconModifier.replace("[ICON]", defaultThemeIcons[i]);
@@ -1642,24 +1787,16 @@ Recompose naturally for the chosen aspect ratio with generous safe margins. Keep
 
         if (targetTool === "midjourney") {
             if (useMultipleReferences) {
-                result = "[REFERENCE FILE NOTE: Attach two or more reference images directly in the target AI conversation before submitting this prompt. You do not need to upload them into this prompt tool; this page does not transfer image files automatically.]\n\n" + basePrompt.replace(/\n\n/g, ' ').replace(/\n/g, ' ');
-            } else if (currentImg) {
-                // V7.0 single-image behavior is retained.
-                result = currentImg + " " + basePrompt.replace(/\n\n/g, ' ').replace(/\n/g, ' ');
+                result = "[REFERENCE FILE NOTE: Attach two or more reference images directly in the target AI conversation before submitting this prompt. You do not need to upload them into this prompt tool; this page copies prompt text only and does not transfer image files.]\n\n" + basePrompt.replace(/\n\n/g, ' ').replace(/\n/g, ' ');
             } else {
-                let promptWithoutImageText = basePrompt.replace("Transform the uploaded image into a ", "Create an image featuring a subject in a ");
-                promptWithoutImageText = promptWithoutImageText.replace("Transform the uploaded image into an ", "Create an image featuring a subject in an ");
-                result = promptWithoutImageText.replace(/\n\n/g, ' ').replace(/\n/g, ' ');
+                // Tek görsel modunda da program içindeki yükleme zorunlu değildir; görsel hedef AI sohbetine eklenebilir.
+                result = "[REFERENCE FILE NOTE: Attach one reference image directly in the target AI conversation with this prompt. You do not need to upload it into this prompt tool; this button copies PROMPT TEXT ONLY.]\n\n" + basePrompt.replace(/\n\n/g, ' ').replace(/\n/g, ' ');
             }
         } else {
             if (useMultipleReferences) {
-                result = "[REFERENCE FILE NOTE: Attach two or more reference images directly to your ChatGPT/DALL·E conversation with this prompt. You do not need to upload them into this prompt tool; this page does not transfer image files automatically.]\n\n" + basePrompt;
-            } else if (currentImg) {
-                result = "[This prompt is designed for an attached reference image.]\n\n" + basePrompt;
+                result = "[REFERENCE FILE NOTE: Attach two or more reference images directly to your ChatGPT/DALL·E conversation with this prompt. You do not need to upload them into this prompt tool; this page copies prompt text only and does not transfer image files.]\n\n" + basePrompt;
             } else {
-                let promptWithoutImageText = basePrompt.replace("Transform the uploaded image into a ", "Create an image featuring a subject in a ");
-                promptWithoutImageText = promptWithoutImageText.replace("Transform the uploaded image into an ", "Create an image featuring a subject in an ");
-                result = promptWithoutImageText;
+                result = "[REFERENCE FILE NOTE: Attach one reference image directly to your ChatGPT/DALL·E conversation with this prompt if you want to use a photo as the visual reference. You do not need to upload it into this prompt tool; this button copies prompt text only.]\n\n" + basePrompt;
             }
         }
 
@@ -1667,20 +1804,55 @@ Recompose naturally for the chosen aspect ratio with generous safe margins. Keep
     });
 }
 
-function copyText(id, btn) {
-    const count = getReferenceImageCount();
-    const multiMode = document.getElementById('imageModeMulti').checked;
-    // Tek görsel modunda yerel bir görsel beklenir; çoklu modda görseller AI sohbetine sonradan eklenebilir.
-    if (count < 1 && !multiMode) {
-        alert("Tek görsel modu için önce bir referans görsel yükleyin. Programa görsel yüklemeden prompt oluşturmak için Çoklu görsel modunu seçebilirsiniz.");
-        document.getElementById('fileInput').focus();
+async function copyText(id, btn) {
+    // Prompt metni görsel yükleme şartına bağlı değildir; tüm modlarda serbestçe kopyalanabilir.
+    const field = document.getElementById(id);
+    const text = field ? field.value.trim() : "";
+    if (!text) {
+        alert("Kopyalanacak prompt boş. Önce promptun oluşturulduğunu kontrol edin.");
         return;
     }
-    const text = document.getElementById(id).value;
-    navigator.clipboard.writeText(text);
+
+    // Prompt düğmeleri yalnızca metin kopyalar; görseli panoya yazan işlev ayrı düğmededir.
+    let copied = false;
+    try {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+            await navigator.clipboard.writeText(text);
+            copied = true;
+        }
+    } catch (err) {
+        // Denenecek eski tarayıcı uyumlu yedek yol aşağıda.
+    }
+
+    if (!copied) {
+        let temp = null;
+        try {
+            temp = document.createElement("textarea");
+            temp.value = text;
+            temp.setAttribute("readonly", "");
+            temp.style.position = "fixed";
+            temp.style.left = "-9999px";
+            temp.style.top = "0";
+            document.body.appendChild(temp);
+            temp.focus();
+            temp.select();
+            copied = Boolean(document.execCommand("copy"));
+        } catch (err) {
+            copied = false;
+        } finally {
+            if (temp && temp.parentNode) temp.parentNode.removeChild(temp);
+        }
+    }
+
+    if (!copied) {
+        // Panoya erişim engellenirse başarı göstermeyip kullanıcıya metni elle kopyalama olanağı ver.
+        window.prompt("Tarayıcı otomatik kopyalamayı engelledi. Metni seçip Ctrl+C ile kopyalayın:", text);
+        return;
+    }
+
     const old = btn.innerText;
     const oldBg = btn.style.background;
-    btn.innerText = "✅ Kopyalandı!";
+    btn.innerText = "✅ Prompt Kopyalandı!";
     btn.style.background = "#22c55e";
     btn.style.color = "#fff";
     setTimeout(() => {
@@ -1689,7 +1861,6 @@ function copyText(id, btn) {
         btn.style.color = "#000";
     }, 2000);
 }
-
 function toggleEdit(id, btn) {
     const el = document.getElementById(id);
     if(el.hasAttribute('readonly')) {
